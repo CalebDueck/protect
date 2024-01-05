@@ -1,4 +1,5 @@
 from rpi_ws281x import *
+from color_helpers import c
 
 class LEDSegment:
     def __init__(self, strip, start_index, end_index):
@@ -18,7 +19,7 @@ class LEDStripController:
         self.LED_PIN = pin
         self.LED_FREQ_HZ = 800000
         self.LED_DMA = 10
-        self.LED_BRIGHTNESS = 50
+        self.LED_BRIGHTNESS = 50 #max is 255
         self.LED_INVERT = False
         self.LED_CHANNEL = 0
 
@@ -36,3 +37,10 @@ class LEDStripController:
 
     def set_segment_color(self, segment_index, color):
         self.segments[segment_index].set_color(color)
+
+    def set_button_color(self, color):
+        for i in range(len(self.segments)):
+            self.segments[i].set_color(color)
+
+    def turn_off_leds(self):
+        self.set_button_color(c.no_light)

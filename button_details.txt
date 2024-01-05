@@ -5,3 +5,11 @@ Works with rpi_ws281x library
 1 in centre
 
 Order of LEDS: Outer -> middle -> centre
+
+
+Wires:
+Connect to the NO spade terminal (middle) and the COM (farthest from button)
+
+Red = 5V
+Black = GND
+Yellow = data
