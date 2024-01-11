@@ -12,6 +12,7 @@ class Button:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.pin, GPIO.RISING, callback=self.on_rising_edge, bouncetime=100)
+        print("Button setup: BTN pin: ", presspin, "led pin", ledpin)
 
     def on_rising_edge(self, channel):
         current_time = time.time()

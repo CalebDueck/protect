@@ -7,6 +7,7 @@ count = 0
 button_pin = 17  # Replace with the GPIO pin number you're using
 led_pin = 18 
 button = Button(button_pin, led_pin)
+button2 = Button(20, 21) # only using the light
 
 def shift_color():
     global count
@@ -31,25 +32,21 @@ def toggle_white():
     if(count==0):
         count=1
         button.led.set_button_color(color=c.white)
+        button2.led.turn_off_leds()
     else:
         count=0
         button.led.turn_off_leds()
+        button2.led.set_button_color(color=c.white)
 
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Button Presser and LED Tester')
-    parser.add_argument('--mode', type=str, help='toggle, rainbow, color')
-
-    args = parser.parse_args()
+    button.led.set_button_color(color=c.white)
+    button2.led.set_button_color(color=c.white)
 
     # Access the value of the argument 
-    if args.mode == 'toggle':
-        button.set_callback(toggle_white)
-    elif args.mode == 'rainbow':
-        button.set_callback(shift_rainbow_color)
-    else:
-        button.set_callback(shift_color)
+    button.set_callback(toggle_white)
+    
 
     try:
         #nothing

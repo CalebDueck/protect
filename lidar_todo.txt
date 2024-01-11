@@ -1,0 +1,4 @@
+make a function that will return median of centre of person
+
+add clustering to differentiate between players
+get_centre_points(numplayers, num_read_cycles)
