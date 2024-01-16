@@ -1,0 +1,62 @@
+{
+  "levels": [
+    {
+      "level_id": 1,
+      "level_name": "Level 1",
+      "commands": [
+        {
+          "command_id": 1,
+          "command_name": "Precise Ball Hit Box",
+          "time_start": 2,
+          "location_x": 0,
+          "location_y": 0,
+          "time_end": 10,
+          "points": -20
+        },
+        {
+          "command_id": 2,
+          "command_name": "Precise Ball Hit Box",
+          "time_start": 2,
+          "location_x": 0,
+          "location_y": 1,
+          "time_end": 10,
+          "points": -50
+        }
+        
+      ]
+    },
+    {
+      "level_id": 2,
+      "level_name": "Level 2",
+      "commands": [
+        {
+          "command_id": 1,
+          "command_name": "Imprecise Hit Box",
+          "time_start": 2,
+          "location_x": -1,
+          "location_y": -1,
+          "time_end": 5,
+          "points": 50
+        },
+        {
+          "command_id": 2,
+          "command_name": "Imprecise Hit Box",
+          "time_start": 5,
+          "location_x": -1,
+          "location_y": -1,
+          "time_end": 10,
+          "points": 20
+        },
+        {
+          "command_id": 3,
+          "command_name": "Imprecise Hit Box",
+          "time_start": 5,
+          "location_x": -1,
+          "location_y": -1,
+          "time_end": 10,
+          "points": 20
+        }
+      ]
+    }
+  ]
+}
