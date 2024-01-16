@@ -1,9 +1,10 @@
 import RPi.GPIO as GPIO
 import time
-from button_led import *
+from .button_led import *
 
 class Button:
-    def __init__(self, presspin, ledpin, min_time_between_presses=0.5):
+    def __init__(self, _id, presspin, ledpin, min_time_between_presses=0.5):
+        self.id = _id
         self.pin = presspin
         self.last_pressed = 0
         self.filter_duration = min_time_between_presses  # Filter duration in seconds
@@ -22,7 +23,7 @@ class Button:
     
     def button_action(self):
         if self.callback:
-            self.callback()       
+            self.callback(self.id)       
         
 
     def set_callback(self, callback):

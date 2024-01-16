@@ -1,5 +1,5 @@
 from rpi_ws281x import *
-from color_helpers import c
+from .color_helpers import c
 
 class LEDSegment:
     def __init__(self, strip, start_index, end_index):
