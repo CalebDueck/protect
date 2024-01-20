@@ -6,12 +6,15 @@ import enum
 import json
 import time 
 from serverGame import *
+from lib.motor import launcher_motors
 
 class MotorControllerMainApp(BaseServerGame):
     def __init__(self, width, height, host, port):
         super().__init__(width, height, host, port)
 
         self.impreciseHitBoxes = []
+        self.launcher_motors = launcher_motors(16,26)
+        self.launcher_motors.start_thread()
 
     def reset_game(self):
         pass
@@ -39,7 +42,7 @@ class MotorControllerMainApp(BaseServerGame):
             pygame.time.Clock().tick(30)
 
     def read_game_file(self):
-        with open('server/motorController.json', 'r') as file:
+        with open('motorController.json', 'r') as file:
             self.game_data = json.load(file)   
 
     def update_information(self):
@@ -68,7 +71,7 @@ class MotorControllerMainApp(BaseServerGame):
             points = command['points']
             speed = command['speed']
             if not 'completed' in command: 
-                # pass speed to motor here
+                self.launcher_motors.update_speed(speed)
                 print("Shot ball for command_id", command_id, "at speed", speed)
                 command['completed'] = True
 
