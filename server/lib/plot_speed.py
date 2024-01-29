@@ -22,7 +22,7 @@ plt.scatter(left_time, left_speed, color = 'g',
          marker = 'o',label = "left speed")
 plt.scatter(left_time, right_speed, color = 'r', 
          marker = 'o',label = "right speed") 
-major_ticks = np.arange(0, 3000, 500)
+major_ticks = np.arange(0, 5000, 500)
 plt.yticks(major_ticks)
 plt.grid() 
 plt.legend() 

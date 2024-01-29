@@ -27,9 +27,9 @@ class launcher_motors:
         self.desired_speed = 0
         self.pwm_l = 0
         self.pwm_r = 0
-        self.kp = 0.0067
+        self.kp = 0.01
         self.ki = 0
-        self.kd = 0
+        self.kd = 0.01
         
         # setup arrays for storing speed
         self.timestamps = [-1] * 10_000
@@ -74,6 +74,10 @@ class launcher_motors:
         
         i = 0
         
+        Lerror_buf = [0,0,0,0,0]
+        Rerror_buf = [0,0,0,0,0]
+        buf_index = 0
+        
         while 1:
             # increment left count on rising edge
             if GPIO.input(self.left_HAL) != old_value_L:
@@ -86,22 +90,51 @@ class launcher_motors:
                     count_R+=1
                 old_value_R = not old_value_R
             # every 100ms, record the time and # of counts
-            if time.perf_counter() - old_time > 0.05:
+            if time.perf_counter() - old_time > 0.1:
                 self.timestamps[i] = time.perf_counter()
                 self.L_speed[i] = count_L/(12*(self.timestamps[i]-self.timestamps[i-1]))*60;
                 self.R_speed[i] = count_R/(12*(self.timestamps[i]-self.timestamps[i-1]))*60;
                 old_time = time.perf_counter();
                 count_L = 0
                 count_R = 0
-                new_pwm_l = np.clip(self.pwm_l + self.kp*(self.desired_speed - self.L_speed[i]), 0, 60)
-                new_pwm_r = np.clip(self.pwm_r + self.kp*(self.desired_speed - self.R_speed[i]), 0, 60)
+                Lerror = self.desired_speed - self.L_speed[i]
+                Rerror = self.desired_speed - self.R_speed[i]
+                Lerror_buf[buf_index] = Lerror
+                Rerror_buf[buf_index] = Rerror
+                Ledot = 0
+                Leint = 0
+                Redot = 0
+                Reint = 0
+                if (i > 4):
+                    for ind in range(5):
+                        temp_i = buf_index - ind
+                        prev_i = buf_index - ind - 1
+                        if temp_i < 0:
+                            temp_i = 5 - ind
+                        if prev_i < 0 :
+                            prev_i = 5 - ind -1
+                        dt = self.timestamps[i-ind]-self.timestamps[i-ind-1]
+                        Ledot += (Lerror_buf[temp_i] - Lerror_buf[prev_i])/dt
+                        Leint += (Lerror_buf[temp_i] - Lerror_buf[prev_i])*dt
+                        Redot += (Rerror_buf[temp_i] - Rerror_buf[prev_i])/dt
+                        Reint += (Rerror_buf[temp_i] - Rerror_buf[prev_i])*dt
+                Ledot /= 5
+                Leint /= 5
+                Redot /= 5
+                Reint /=5
+                #print(error, edot, eint)
+                new_pwm_l = np.clip(self.pwm_l + self.kp*Lerror + self.ki*Leint + self.kd*Ledot, 0, 60)
+                new_pwm_r = np.clip(self.pwm_r + self.kp*Rerror + self.ki*Reint + self.kd*Redot, 0, 60)
                 if(abs(new_pwm_l - self.pwm_l) > 1):
                     self.pwm0.change_duty_cycle(new_pwm_l)
                     self.pwm_l = new_pwm_l
                 if(abs(new_pwm_r - self.pwm_r) > 1):
                     self.pwm1.change_duty_cycle(new_pwm_r)
                     self.pwm_r = new_pwm_r
-                i += 1;
+                i += 1
+                buf_index += 1
+                if buf_index == 4:
+                    buf_index = 0
             if self.running == 0:
                 break
         
