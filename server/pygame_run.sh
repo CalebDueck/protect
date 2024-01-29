@@ -10,7 +10,7 @@ else
 	echo "File does not exist"
 fi
 
-pygame_script="./IRFrame.py"
+pygame_script="./SideWall.py"
 
 log_file="./pygame_output.txt"
 
@@ -39,7 +39,7 @@ if is_lxterminal_running; then
 
 fi
 
-lxterminal -e sh -c "export DISPLAY=:0; . venv/bin/activate; python3 $pygame_script > $log_file 2>&1" &
+lxterminal -e sh -c "export DISPLAY=:0; . venv/bin/activate; sudo venv/bin/python3 $pygame_script > $log_file 2>&1" &
 
 timeout=10
 

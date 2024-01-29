@@ -139,6 +139,7 @@ class launcher_motors:
                 break
         
     def update_speed(self, rpm: int):
+        print("Speed Update", rpm)
         self.desired_speed = rpm
     
     def start_thread(self):
