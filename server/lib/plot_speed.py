@@ -17,10 +17,11 @@ with open('speeds.csv','r') as csvfile:
         left_speed.append(float(row[0]))
         left_time.append(float(row[2]))
         right_speed.append(float(row[1]))
+        right_time.append(float(row[3]))
 
 plt.scatter(left_time, left_speed, color = 'g', 
          marker = 'o',label = "left speed")
-plt.scatter(left_time, right_speed, color = 'r', 
+plt.scatter(right_time, right_speed, color = 'r', 
          marker = 'o',label = "right speed") 
 major_ticks = np.arange(0, 5000, 500)
 plt.yticks(major_ticks)
