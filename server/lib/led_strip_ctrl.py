@@ -53,12 +53,18 @@ class LEDStripController:
             self.segments.extend([segment1, segment2, segment3])
         else:
             for i in range(len(segment_border_num_array)-1):
-                seg_i = LEDSegment(self.strip, segment_border_num_array[i], segment_border_num_array[i+1])
-                self.segments.append(seg_i)
+                if segment_border_num_array[i+1]>num_leds:
+                    print("ERROR: segment index %d is out of range", i+1)
+                else:
+                    seg_i = LEDSegment(self.strip, segment_border_num_array[i], segment_border_num_array[i+1])
+                    self.segments.append(seg_i)
 
 
     def set_segment_color(self, segment_index, color, off_vs_on = 0):
-        self.segments[segment_index].set_color(color, off_vs_on)
+        if segment_index>len(self.segments):
+            print("ERROR: Tried setting nonexistent segment")
+        else:
+            self.segments[segment_index].set_color(color, off_vs_on)
 
     def set_strip_color(self, color):
         for i in range(len(self.segments)):
