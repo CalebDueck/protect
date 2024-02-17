@@ -1,5 +1,7 @@
 from rpi_ws281x import *
 from color_helpers import c
+import time
+
 
 class LEDSegment:
     def __init__(self, strip, start_index, end_index):
@@ -14,6 +16,8 @@ class LEDSegment:
                 self.strip.setPixelColor(i, color)
             else:
                 self.strip.setPixelColor(i, c.no_light)
+        time.sleep(0.01)
+
         self.strip.show()
 
 
@@ -32,9 +36,9 @@ class LEDStripController:
         else:
             self.LED_COUNT = num_leds
         self.LED_PIN = pin
-        self.LED_FREQ_HZ = 800000
+        self.LED_FREQ_HZ = 800000 #maybe change
         self.LED_DMA = 10
-        self.LED_BRIGHTNESS = 50 #max is 255
+        self.LED_BRIGHTNESS = 10 #max is 255
         self.LED_INVERT = False
         self.LED_CHANNEL = 0
 
