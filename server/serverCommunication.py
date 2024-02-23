@@ -99,7 +99,7 @@ class ServerThread:
         self.add_message(message)
     
     def send_end(self):
-        message = "SERVER,END_GAME\n"
+        message = "Server,END_GAME\n"
         self.add_message(message)
 
 if __name__ == "__main__":

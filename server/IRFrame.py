@@ -27,6 +27,9 @@ class BackWallMainApp(BaseServerGame):
         for rect in self.rectangles:
             rect[1] = False
             rect[2] = self.WHITE
+            rect[3] = 0
+            rect[4] = False
+        self.start_game = False
 
     def is_inside_rect(self, pos, rect):
         return rect.collidepoint(pos)
@@ -180,7 +183,14 @@ class BackWallMainApp(BaseServerGame):
                         elif matching_entry[3] < 0:
                             matching_entry[2] = self.BLUE
 
-                        matching_entry[3] = points            
+                        matching_entry[3] = points 
+            # Last Command       
+            if command == commands[-1]:
+                if time_since_start > time_end + 5:
+                    self.server.send_end()
+                    self.reset_game()
+
+           
 
 if __name__ == "__main__":
     backWallMainApp = BackWallMainApp(2560,1440,'activateMotor.local',12345)
