@@ -266,6 +266,39 @@ class MainGame:
         for i in range(self.lives):
             self.screen.blit(self.heart_image, (heart_x + i * self.heart_size[0], heart_y))
 
+    def end_game_tasks(self):
+        self.state = MainGameStates.END_GAME
+        for element in self.end_game_ack:
+            element = False
+            # Check if the file exists
+
+        cwd = os.getcwd()
+
+        # Create the full path by joining the current working directory with the relative path
+        full_path = os.path.join(cwd, 'high_scores.json')
+
+        if not os.path.exists(full_path):
+            # If the file doesn't exist, create an empty dictionary
+            data = {}
+            print("File doesnt exist")
+        else:
+            # Load existing data from the file if it exists
+            with open(full_path, 'r') as file:
+                data = json.load(file)
+
+        # Check if the name is already in the data
+        if self.name in data:
+            # Update the score only if the new score is higher
+            if self.points > data[self.name]:
+                data[self.name] = self.points
+        else:
+            # Add the name and score if it doesn't exist in the data
+            data[self.name] = self.points
+
+        # Save the updated data back to the file
+        with open(full_path, 'w') as file:
+            json.dump(data, file)
+
 if __name__ == "__main__":
 
     servers = [('activateMotor.local',12345)]
