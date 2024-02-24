@@ -4,7 +4,8 @@ import pygame
 import sys
 import enum
 from sshclient import run_powershell_script
-
+import os as os
+import json
 class MainGameStates(enum.IntEnum):
     START_SCREEN = 0
     LEVEL_SELECT = 1
@@ -52,6 +53,8 @@ class MainGame:
         self.points = 0
         self.lives = 5
 
+        self.input_active = True
+        self.name = ""
 
         self.serversAddresses = serversAddresses
         self.servers = []
@@ -82,7 +85,14 @@ class MainGame:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    running = False
+                    self.running = False
+                if self.input_active:
+                    if event.key == pygame.K_RETURN:
+                        self.input_active = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.name = self.name[:-1]
+                    else:
+                        self.name += event.unicode
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # Check button clicks
                 if self.start_button.collidepoint(event.pos):
@@ -108,6 +118,8 @@ class MainGame:
                     self.state = MainGameStates.START_SCREEN
                     self.points = 0
                     self.lives = 5
+                    self.name = ""
+                    self.input_active = True
                 
             elif event.type == NetworkEvents.EVENT_POINT_UPDATE:
                 print("Received Point Update")
@@ -142,7 +154,7 @@ class MainGame:
 
                 if all(self.end_game_ack):
                     print("Ending Game")
-                    self.state = MainGameStates.END_GAME      
+                    self.end_game_tasks()
 
 
         while not self.event_queue.empty():
@@ -153,9 +165,17 @@ class MainGame:
         self.screen.fill(self.white)
 
         if self.state == MainGameStates.START_SCREEN:
-            pygame.draw.rect(self.screen, self.black, self.start_button)
-            text = self.font.render("Start", True, self.white)
-            self.screen.blit(text, (self.start_button.x + 70, self.start_button.y + 15))
+            if not self.input_active:
+                pygame.draw.rect(self.screen, self.black, self.start_button)
+                text = self.font.render("Start", True, self.white)
+                self.screen.blit(text, (self.start_button.x + 70, self.start_button.y + 15))
+
+            # Display user input
+            input_text = self.font.render("Enter your name: " + self.name, True, self.black)
+            input_rect = input_text.get_rect(center=(self.screen_width // 2, self.screen_height // 1.5))
+            self.screen.blit(input_text, input_rect)
+
+            pygame.draw.rect(self.screen, self.black, (input_rect.left, input_rect.bottom, input_rect.width, 2))
 
         elif self.state == MainGameStates.LEVEL_SELECT:
             pygame.draw.rect(self.screen, self.black, self.level1_button)
@@ -238,7 +258,7 @@ class MainGame:
         pygame.display.flip()
         pygame.time.wait(transition_time)
         if self.lives == 0:
-            self.state = MainGameStates.END_GAME
+            self.end_game_tasks()         
 
     def draw_hearts(self):
         heart_x = (self.screen_width - self.lives * self.heart_size[0]) // 2
