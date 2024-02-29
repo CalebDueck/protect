@@ -6,6 +6,8 @@ import enum
 import json
 import time 
 from serverGame import *
+from lib.backwall import LEDBackwall
+from lib.color_helpers import c
 
 class BackWallMainApp(BaseServerGame):
     def __init__(self, width, height, host, port):
@@ -21,9 +23,11 @@ class BackWallMainApp(BaseServerGame):
         for y in range(0, self.HEIGHT, self.RECT_HEIGHT):
             for x in range(0, self.WIDTH, self.RECT_WIDTH):            
                 rect = pygame.Rect(x, y, self.RECT_WIDTH, self.RECT_HEIGHT)
-                self.rectangles.append([rect, False, self.WHITE, 0, False]) # rectangle, clicked, colour, points when clicked, successfully completed
+                self.rectangles.append([rect, False, self.WHITE, 0, False, True]) # rectangle, clicked, colour, points when clicked, successfully completed, update colour
 
         self.impreciseHitBoxes = []
+
+        self.LED_control = LEDBackwall(12, 18)
 
     def reset_game(self):
         for rect in self.rectangles:
@@ -31,6 +35,7 @@ class BackWallMainApp(BaseServerGame):
             rect[2] = self.WHITE
             rect[3] = 0
             rect[4] = False
+            rect[5] = True
         self.start_game = False
 
     def is_inside_rect(self, pos, rect):
@@ -38,8 +43,16 @@ class BackWallMainApp(BaseServerGame):
 
     # Function to draw the grid of rectangles
     def draw_grid(self):
-        for rect in self.rectangles:
+        for index, rect in enumerate(self.rectangles):
             pygame.draw.rect(self.screen, rect[2], rect[0])
+            if rect[5]:
+                led_color = self.convert_color_to_LED_color(rect[2])
+                if led_color:
+                    on = led_color != c.white
+                    self.LED_control.set_color(index, led_color, on)
+                print("Setting Color of " + str(index) + "to " + str(rect[2]))
+                rect[5] = False
+
 
     def run(self):
         self.start_game = False
@@ -62,11 +75,13 @@ class BackWallMainApp(BaseServerGame):
                                 self.points = rect[3]
                                 rect[3] = 0
                                 rect[2] = self.GREEN
+                                rect[5] = True
                             elif (rect[3] < 0 and rect[4] == False):
                                 rect[4] = True
                                 self.lives = -1
                                 rect[3] = 0
                                 rect[2] = self.ORANGE
+                                rect[5] = True
                             else:
                                 if rect[2] != self.GREEN:
                                     matching_entry = next((entry for entry in self.impreciseHitBoxes if entry[1] == 0), None)
@@ -160,6 +175,7 @@ class BackWallMainApp(BaseServerGame):
                         matching_entry[2] = self.WHITE
                         matching_entry[3] = 0
                         matching_entry[4] = False
+                        matching_entry[5] = True
                     elif matching_entry[4] == False and matching_entry[3] < 0:
                         self.points = abs(matching_entry[3])
                         self.server.point_update(self.points,self.lives)
@@ -168,6 +184,7 @@ class BackWallMainApp(BaseServerGame):
                         matching_entry[2] = self.WHITE
                         matching_entry[3] = 0
                         matching_entry[4] = False
+                        matching_entry[5] = True
                     else:
                         # reset the rectangle
                         if matching_entry[4] == True:
@@ -175,14 +192,17 @@ class BackWallMainApp(BaseServerGame):
                             matching_entry[2] = self.WHITE
                             matching_entry[3] = 0
                             matching_entry[4] = False
+                            matching_entry[5] = True
                     
                     command['completed'] = True
         
                 elif not 'completed' in command:
                     if matching_entry[4] != True:
                         if (matching_entry[3] > 0):
+                            matching_entry[5] = matching_entry[2] != self.RED
                             matching_entry[2] = self.RED
                         elif matching_entry[3] < 0:
+                            matching_entry[5] = matching_entry[2] != self.BLUE
                             matching_entry[2] = self.BLUE
 
                         matching_entry[3] = points 
@@ -191,6 +211,22 @@ class BackWallMainApp(BaseServerGame):
                 if time_since_start > time_end + 5:
                     self.server.send_end()
                     self.reset_game()
+
+
+    def convert_color_to_LED_color(self,color):
+        led_color = None
+        if color == self.WHITE:
+            led_color = c.white
+        elif color == self.RED:
+            led_color = c.red
+        elif color == self.BLUE:
+            led_color = c.blue
+        elif color == self.ORANGE:
+            led_color = c.orange
+        elif color == self.GREEN:
+            led_color = c.green
+        return led_color
+
 
            
 
