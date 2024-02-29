@@ -13,12 +13,14 @@ class BackWallMainApp(BaseServerGame):
 
         # set up rectangles for back wall
         self.rectangles = []
-        self.GRID_SIZE = 10
-        self.RECT_SIZE = self.WIDTH // self.GRID_SIZE
+        self.GRIDS_WIDTH = 10
+        self.RECT_WIDTH = self.WIDTH // self.GRIDS_WIDTH
 
-        for x in range(0, self.WIDTH, self.RECT_SIZE):
-            for y in range(0, self.HEIGHT, self.RECT_SIZE):
-                rect = pygame.Rect(x, y, self.RECT_SIZE, self.RECT_SIZE)
+        self.GRIDS_HEIGHT = 6
+        self.RECT_HEIGHT = self.HEIGHT // self.GRIDS_HEIGHT
+        for y in range(0, self.HEIGHT, self.RECT_HEIGHT):
+            for x in range(0, self.WIDTH, self.RECT_WIDTH):            
+                rect = pygame.Rect(x, y, self.RECT_WIDTH, self.RECT_HEIGHT)
                 self.rectangles.append([rect, False, self.WHITE, 0, False]) # rectangle, clicked, colour, points when clicked, successfully completed
 
         self.impreciseHitBoxes = []
@@ -144,7 +146,7 @@ class BackWallMainApp(BaseServerGame):
                     
             else:
                 # Use list comprehension to find the entry that matches the specified location_x and location_y
-                matching_entry = next((rect for rect in self.rectangles if rect[0].left == location_x*self.RECT_SIZE and rect[0].top == location_y*self.RECT_SIZE), None)
+                matching_entry = next((rect for rect in self.rectangles if rect[0].left == location_x*self.RECT_WIDTH and rect[0].top == location_y*self.RECT_HEIGHT), None)
                 if matching_entry == None:
                     print("Cant find rectangle")
                     return
