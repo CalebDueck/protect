@@ -1,0 +1,26 @@
+from backwall import *
+import time
+
+top_half_pin = 12
+bot_half_pin = 18
+
+
+count = 1
+
+def main():
+    backwall = LEDBackwall(top_half_pin, bot_half_pin)
+
+    try:
+        while(True):
+            global count
+            backwall.turn_off_segment((count-1)%60)
+            backwall.set_color(count%60, c.blue)
+
+
+    except KeyboardInterrupt:
+        backwall.turn_off_all()
+        time.sleep(0.1)
+
+
+if __name__ == '__main__':
+    main()
