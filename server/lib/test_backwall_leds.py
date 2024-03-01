@@ -3,7 +3,7 @@ import time
 import neopixel
 import board
 
-led_pins = [12, 18] 
+led_pins = [13, 18] 
 num_segments_per_row = 10
 num_leds_per_row = 180
 num_rows_per_pin = 3
@@ -52,14 +52,16 @@ def main():
 
             # rainbow segments
             for i in range(len(segment_def_arr)-1):
-                #time.sleep(0.01)
-                backwall_strip1.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0) 
+                time.sleep(0.3)
+                if(count%12>6):
+                    backwall_strip1.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0) 
                 
-                #time.sleep(0.01)
-                backwall_strip2.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0)
+                else:
+                    backwall_strip2.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0)
 
 
-            count = (count+1)%(num_segments_per_row*num_rows_per_pin)
+            time.sleep(0.5)
+            count = (count+1)
 
     except KeyboardInterrupt:
         backwall_strip1.turn_off_leds()

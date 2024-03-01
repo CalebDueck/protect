@@ -1,6 +1,5 @@
 from led_strip_ctrl import *
 import time
-import neopixel
 import board
 
 
@@ -17,7 +16,7 @@ class LEDBackwall:
         self.top_strip = LEDStripController(num_leds=num_leds_per_row*num_rows_per_pin, pin=top_half_pin, isbutton=False, segment_border_num_array=segment_def_arr)
         self.bot_strip = LEDStripController(num_leds=num_leds_per_row*num_rows_per_pin, pin=bottom_half_pin, isbutton=False, segment_border_num_array=segment_def_arr)
 
-    def square_index_to_strip_index(square_index):
+    def square_index_to_strip_index(self, square_index):
         top_strip = False
         strip_index = -1
         if square_index < 30:
@@ -40,13 +39,19 @@ class LEDBackwall:
 
     def set_color(self, square_index, color, off_vs_on=0):
         top_strip, strip_index = self.square_index_to_strip_index(square_index)
+        print("Index",square_index)
+        print("Top strip",top_strip)
+        print("strip intx", strip_index)
+        
         if strip_index == -1:
             print("Invalid square_index received")
             return
         
-        if top_strip:
+        if top_strip==True:
+            print("TOP out")
             self.top_strip.set_segment_color(strip_index, color, off_vs_on) 
-        else:
+        elif top_strip==False:
+            print("BIP out")
             self.bot_strip.set_segment_color(strip_index, color, off_vs_on) 
 
     def turn_off_segment(self, square_index):
@@ -55,9 +60,9 @@ class LEDBackwall:
             print("Invalid square_index received")
             return
         
-        if top_strip:
+        if top_strip==True:
             self.top_strip.set_segment_color(strip_index, c.no_light) 
-        else:
+        elif top_strip==False:
             self.bot_strip.set_segment_color(strip_index, c.no_light)
 
     def turn_off_all(self):

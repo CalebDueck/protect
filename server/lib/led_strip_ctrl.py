@@ -1,6 +1,8 @@
 from rpi_ws281x import *
 from color_helpers import c
 import time
+import RPi.GPIO as GPIO
+
 
 
 class LEDSegment:
@@ -38,9 +40,21 @@ class LEDStripController:
         self.LED_PIN = pin
         self.LED_FREQ_HZ = 800000 #maybe change
         self.LED_DMA = 10
-        self.LED_BRIGHTNESS = 10 #max is 255
+        self.LED_BRIGHTNESS = 30 #max is 255
         self.LED_INVERT = False
-        self.LED_CHANNEL = 0
+
+        #fix sync issues
+        if pin==13:
+            self.LED_CHANNEL = 1
+        else:
+            self.LED_CHANNEL=0
+            
+        # GPIO.setmode(GPIO.BCM)
+
+        # GPIO.setup(pin, GPIO.OUT)
+
+        # pwm_instance = GPIO.PWM(pin, self.LED_CHANNEL)
+        # pwm_instance.start(0)
 
         # Create LED strip
         self.strip = Adafruit_NeoPixel(self.LED_COUNT, self.LED_PIN, self.LED_FREQ_HZ,
@@ -65,7 +79,7 @@ class LEDStripController:
 
 
     def set_segment_color(self, segment_index, color, off_vs_on = 0):
-        if segment_index>len(self.segments):
+        if segment_index>=len(self.segments):
             print("ERROR: Tried setting nonexistent segment")
         else:
             self.segments[segment_index].set_color(color, off_vs_on)
