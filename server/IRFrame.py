@@ -27,7 +27,7 @@ class BackWallMainApp(BaseServerGame):
 
         self.impreciseHitBoxes = []
 
-        self.LED_control = LEDBackwall(12, 18)
+        self.LED_control = LEDBackwall(13, 18)
 
     def reset_game(self):
         for rect in self.rectangles:
@@ -48,8 +48,11 @@ class BackWallMainApp(BaseServerGame):
             if rect[5]:
                 led_color = self.convert_color_to_LED_color(rect[2])
                 if led_color:
-                    on = led_color != c.white
-                    self.LED_control.set_color(index, led_color, on)
+                
+                    if led_color == c.white:
+                        self.LED_control.turn_off_segment(index)
+                    else:
+                        self.LED_control.set_color(index, led_color, 0)
                 print("Setting Color of " + str(index) + "to " + str(rect[2]))
                 rect[5] = False
 
@@ -231,6 +234,6 @@ class BackWallMainApp(BaseServerGame):
            
 
 if __name__ == "__main__":
-    backWallMainApp = BackWallMainApp(2560,1440,'activateMotor.local',12345)
+    backWallMainApp = BackWallMainApp(1920,1080,'192.168.1.141',12345)
     backWallMainApp.connect_client()
     backWallMainApp.run()
