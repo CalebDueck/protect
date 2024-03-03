@@ -71,7 +71,7 @@ while running:
             grid[row][col] = not grid[row][col]
             grid_update[row][col] = True
         elif event.type == pygame.FINGERDOWN:
-            x, y = event.x*WIDTH, event.y*HEIGHT
+            x, y = event.x, event.y
             col = int(x // RECT_SIZE)
             row = int(y // RECT_HEIGHT)
             grid[row][col] = not grid[row][col]
