@@ -9,3 +9,13 @@ class ArduinoSerial:
         self.comm.write(bytes(message, 'utf-8'))
         time.sleep(0.05)
         return self.comm.readline()
+    
+    def write(self, message):
+        self.comm.write(bytes(message,'utf-8'))
+
+if __name__ == "__main__":
+    comm = ArduinoSerial("COM4", 9600)
+    while(1):
+        message = input("Enter Arduino Command to send")
+        message += "\n"
+        comm.write(message)

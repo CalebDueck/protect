@@ -7,7 +7,7 @@ import json
 import time 
 from serverGame import *
 from lib.motor import launcher_motors
-
+from lib.arduino_serial_comm import *
 class MotorControllerMainApp(BaseServerGame):
     def __init__(self, width, height, host, port):
         super().__init__(width, height, host, port)
@@ -15,6 +15,7 @@ class MotorControllerMainApp(BaseServerGame):
         self.impreciseHitBoxes = []
         self.launcher_motors = launcher_motors(16,26)
         self.launcher_motors.start_thread()
+        self.arduino = ArduinoSerial("COM4", 9600)
 
     def reset_game(self):
         pass
@@ -68,11 +69,15 @@ class MotorControllerMainApp(BaseServerGame):
             command_name = command['command_name']
             location_x = command['location_x']
             location_y = command['location_y']
+            height = command['height']
+            yaw = command['yaw']
             points = command['points']
             speed = command['speed']
             if not 'completed' in command: 
                 self.launcher_motors.update_speed(speed)
                 print("Shot ball for command_id", command_id, "at speed", speed)
+                message = f"{height},{yaw}\n"
+                self.arduino.write(message)
                 command['completed'] = True
 
 if __name__ == "__main__":
