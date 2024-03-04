@@ -10,8 +10,8 @@ from lib.backwall import LEDBackwall
 from lib.color_helpers import c
 
 class BackWallMainApp(BaseServerGame):
-    def __init__(self, width, height, host, port):
-        super().__init__(width, height, host, port)
+    def __init__(self, width, height, host, port, dummy_server=False):
+        super().__init__(width, height, host, port, dummy_server=dummy_server)
 
         # set up rectangles for back wall
         self.rectangles = []

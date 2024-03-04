@@ -9,8 +9,8 @@ from serverGame import *
 from lib.motor import launcher_motors
 from lib.arduino_serial_comm import *
 class MotorControllerMainApp(BaseServerGame):
-    def __init__(self, width, height, host, port):
-        super().__init__(width, height, host, port)
+    def __init__(self, width, height, host, port, dummy_server=False):
+        super().__init__(width, height, host, port, dummy_server=dummy_server)
 
         self.impreciseHitBoxes = []
         self.launcher_motors = launcher_motors(16,26)
@@ -81,6 +81,6 @@ class MotorControllerMainApp(BaseServerGame):
                 command['completed'] = True
 
 if __name__ == "__main__":
-    motor_controller_main_app = MotorControllerMainApp(800,600,'activateMotor.local',12345)
+    motor_controller_main_app = MotorControllerMainApp(800,600,'activateMotor.local',12345, True)
     motor_controller_main_app.connect_client()
     motor_controller_main_app.run()
