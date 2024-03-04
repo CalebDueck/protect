@@ -53,6 +53,7 @@ def draw_grid():
                 else:
                     led.turn_off_segment(row*GRID_WIDTH+col)
                 grid_update[row][col] = False
+                print("Updating LED number: " + str(row*GRID_WIDTH+col))
             pygame.draw.rect(screen, color, (col * RECT_SIZE, row * RECT_HEIGHT, RECT_SIZE, RECT_HEIGHT))
 
 # Main game loop
@@ -64,14 +65,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos[0], event.pos[1]
-            col = int(x // RECT_SIZE)
-            row = int(y // RECT_HEIGHT)
-            grid[row][col] = not grid[row][col]
-            grid_update[row][col] = True
         elif event.type == pygame.FINGERDOWN:
-            x, y = event.x, event.y
+            x, y = event.x*WIDTH, event.y*HEIGHT
             col = int(x // RECT_SIZE)
             row = int(y // RECT_HEIGHT)
             grid[row][col] = not grid[row][col]
