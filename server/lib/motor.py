@@ -27,7 +27,7 @@ class launcher_motors:
         self.desired_speed = 0
         self.pwm_l = 0
         self.pwm_r = 0
-        self.kp = [0.001, 0.004]
+        self.kp = [0.001, 0.002]
         self.ki = [0,0]
         self.kd = [0.0001,0.0001]
         
@@ -149,12 +149,12 @@ class launcher_motors:
                 Reint /= self.error_buf_len
                 new_pwm_l = np.clip(self.pwm_l + self.kp[0]*Lerror + self.ki[0]*Leint + self.kd[0]*Ledot, 35, 60)
                 new_pwm_r = np.clip(self.pwm_r + self.kp[1]*Rerror + self.ki[1]*Reint + self.kd[1]*Redot, 35, 60)
-                print(new_pwm_l, new_pwm_r, Lerror, self.pwm_l, self.pwm_r)
-                if(abs(new_pwm_l - self.pwm_l) > 1 and abs(Lerror) > 50 and time.perf_counter() - last_updated_l > 0.1):
+#                 print(new_pwm_l, new_pwm_r, Lerror, Rerror, self.pwm_l, self.pwm_r)
+                if(abs(Lerror) > 50 and time.perf_counter() - last_updated_l > 0.2):
                     self.pwm0.change_duty_cycle(new_pwm_l)
                     self.pwm_l = new_pwm_l
                     last_updated_l = time.perf_counter()
-                if(abs(new_pwm_r - self.pwm_r) > 1 and abs(Rerror) > 50 and time.perf_counter() - last_updated_r > 0.1):
+                if(abs(Rerror) > 50 and time.perf_counter() - last_updated_r > 0.2):
                     self.pwm1.change_duty_cycle(new_pwm_r)
                     self.pwm_r = new_pwm_r
                     last_updated_r = time.perf_counter()
@@ -168,8 +168,11 @@ class launcher_motors:
         
     def update_speed(self, rpm: int):
         num_steps = int((rpm - self.desired_speed) / 500)
-        for step in range(num_steps):   
-            self.desired_speed = self.desired_speed + 500
+        for step in range(num_steps):
+            if num_steps > 0:
+                self.desired_speed = self.desired_speed + 500
+            else:
+                self.desired_speed = self.desired_speed - 500
             print("setting speed to: ", self.desired_speed)
             time.sleep(0.2)
         self.desired_speed = rpm

@@ -15,7 +15,7 @@ class MotorControllerMainApp(BaseServerGame):
         self.impreciseHitBoxes = []
         self.launcher_motors = launcher_motors(16,26)
         self.launcher_motors.start_thread()
-        self.arduino = ArduinoSerial("COM4", 9600)
+        #self.arduino = ArduinoSerial("COM4", 9600)
 
     def reset_game(self):
         pass
@@ -77,8 +77,12 @@ class MotorControllerMainApp(BaseServerGame):
                 self.launcher_motors.update_speed(speed)
                 print("Shot ball for command_id", command_id, "at speed", speed)
                 message = f"{height},{yaw}\n"
-                self.arduino.write(message)
+                #self.arduino.write(message)
                 command['completed'] = True
+            
+            if command == commands[-1]:
+                if time_since_start > time_start + 15:
+                    self.launcher_motors.update_speed(0)
 
 if __name__ == "__main__":
     motor_controller_main_app = MotorControllerMainApp(800,600,'activateMotor.local',12345, True)
