@@ -25,10 +25,12 @@ class launcher_motors:
         
         # set speed control params
         self.desired_speed = 0
-        self.pwm = [0,0]
-        self.kp = (0.01, 0.01)
-        self.ki = (0,0)
-        self.kd = (0.01, 0.01)
+
+        self.pwm_l = 0
+        self.pwm_r = 0
+        self.kp = [0.001, 0.004]
+        self.ki = [0,0]
+        self.kd = [0.0001,0.0001]
         
         # setup arrays for storing speed
         self.R_timestamps = [-1] * 10_000
@@ -41,6 +43,11 @@ class launcher_motors:
         self.L_speeds[0] = 0
         self.R_speeds[0] = 0
         self.motorThread = 0
+        self.L_pwm = [-1] * 10_000
+        self.R_pwm = [-1] * 10_000
+        self.error_buf_len = 10
+        self.speed_buf_len = 5
+
         
         self.running = False
     
@@ -52,7 +59,8 @@ class launcher_motors:
         GPIO.cleanup()
         with open("speeds.csv", 'w', newline='') as myfile:
             wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-            wr.writerows(zip(self.L_speeds, self.R_speeds, self.L_timestamps, self.R_timestamps))
+            wr.writerows(zip(self.L_speed, self.R_speed, self.timestamps, self.L_pwm, self.R_pwm))
+
         print('\r\nSIGINT or CTRL-C detected. Exiting gracefully')
         self.motorThread.join()
         exit(0)
@@ -74,9 +82,17 @@ class launcher_motors:
         count = [0,0] # count.0 = left count, count.1 = right count
         i = [0, 0]
         
-        # setup error buffer for pid calcs
-        error_buf = [[0,0]] * 5 #(.0 = left error, .1 = right error)
-        buf_index = 0
+        Lerror_buf = [0] * self.error_buf_len
+        Rerror_buf = [0] * self.error_buf_len
+        Lspeed_buf = [0] * self.speed_buf_len
+        Rspeed_buf = [0] * self.speed_buf_len
+        err_buf_index = 0
+        speed_buf_index = 0
+        last_updated_l = time.perf_counter()
+        last_updated_r = time.perf_counter()
+
+        GPIO.setmode(GPIO.BCM)
+
         
         while 1:
             # increment left count on rising edge
@@ -85,70 +101,91 @@ class launcher_motors:
                     count[0] += 1
                 old_value[0] = not old_value[0]
             # increment right count on rising edge
-            if GPIO.input(self.right_HAL) != old_value[1]:
-                if old_value[1] == 0:
-                    count[1] += 1
-                old_value[1] = not old_value[1]
-            # every 100ms or every 10 counts (whichever is faster), record the new wheelspeed
-            if time.perf_counter() - old_time[0] > 0.1 or count[0] > 40:
-                i[0] += 1
-                self.L_timestamps[i[0]] = time.perf_counter()
-                self.L_speeds[i[0]] = count[0]/(12*(self.L_timestamps[i[0]]-self.L_timestamps[i[0]-1]))*60;
-                old_time[0] = time.perf_counter();
-                count[0] = 0
-            if time.perf_counter() - old_time[1] > 0.1 or count[1] > 40:
-                i[1] += 1
-                self.R_timestamps[i[1]] = time.perf_counter()
-                self.R_speeds[i[1]] = count[1]/(12*(self.R_timestamps[i[1]]-self.R_timestamps[i[1]-1]))*60;
-                old_time[1] = time.perf_counter();
-                count[1] = 0
-            # every 10ms, run the pid calculations
-            if time.perf_counter() - pid_time > 0.1 and i[0] >= 0 and i[1] >= 0:
-                # calculate e, edot, eint
-                error_buf[buf_index] = [self.desired_speed - self.L_speeds[i[0]],
-                                        self.desired_speed - self.R_speeds[i[1]]]               
+
+            if GPIO.input(self.right_HAL) != old_value_R:
+                if old_value_R == 0:
+                    count_R+=1
+                old_value_R = not old_value_R
+            # every 100ms, record the time and # of counts
+            if count_L > 5 and count_R > 5 or time.perf_counter()-self.timestamps[i-1] > 0.1:
+                self.timestamps[i] = time.perf_counter()
+                Lspeed_buf[speed_buf_index] = count_L/(12*(self.timestamps[i]-self.timestamps[i-1]))*60;
+                Rspeed_buf[speed_buf_index] = count_R/(12*(self.timestamps[i]-self.timestamps[i-1]))*60;
+                avg_L_speed = 0
+                avg_R_speed = 0
+                for ind in range(self.speed_buf_len):
+                    avg_L_speed += Lspeed_buf[ind]
+                    avg_R_speed += Rspeed_buf[ind]
+                self.L_speed[i] = avg_L_speed / self.speed_buf_len
+                self.R_speed[i] = avg_R_speed / self.speed_buf_len
+                count_L = 0
+                count_R = 0
+                i += 1
+                speed_buf_index += 1
+                if speed_buf_index >= (self.speed_buf_len):
+                    speed_buf_index = 0
+#             if time.perf_counter() - old_time > 0.05:
+                old_time = time.perf_counter();
+                Lerror = self.desired_speed - self.L_speed[i-1]
+                Rerror = self.desired_speed - self.R_speed[i-1]
+#                 print(Lerror)
+                Lerror_buf[err_buf_index] = Lerror
+                Rerror_buf[err_buf_index] = Rerror
+
                 Ledot = 0
                 Leint = 0
                 Redot = 0
                 Reint = 0
-                if i[0] > 4 and i[1] > 4:
-                    for ind in range(5):
-                        temp_i = buf_index - ind
-                        prev_i = buf_index - ind - 1
+
+                if i > self.error_buf_len:
+                    for ind in range(self.error_buf_len):
+                        temp_i = err_buf_index - ind
+                        prev_i = err_buf_index - ind - 1
+
                         if temp_i < 0:
-                            temp_i = 5 - ind
+                            temp_i = self.error_buf_len - ind
                         if prev_i < 0 :
-                            prev_i = 5 - ind -1
-                        L_dt = self.L_timestamps[i[0]-ind]-self.L_timestamps[i[0]-ind-1]
-                        R_dt = self.R_timestamps[i[1]-ind]-self.R_timestamps[i[1]-ind-1]
-                        Ledot += (error_buf[temp_i][0] - error_buf[prev_i][0])/L_dt
-                        Leint += (error_buf[temp_i][0] - error_buf[prev_i][0])*L_dt
-                        Redot += (error_buf[temp_i][1] - error_buf[prev_i][1])/R_dt
-                        Reint += (error_buf[temp_i][1] - error_buf[prev_i][1])*R_dt
-                Ledot /= 5
-                Leint /= 5
-                Redot /= 5
-                Reint /= 5
-                # find and set new speed using kp, ki, kd values
-                new_pwm_l = np.clip(self.pwm[0] + self.kp[0]*error_buf[buf_index][0] + self.ki[0]*Leint + self.kd[0]*Ledot, 0, 60)
-                new_pwm_r = np.clip(self.pwm[1] + self.kp[1]*error_buf[buf_index][1] + self.ki[1]*Reint + self.kd[1]*Redot, 0, 60)
-                if(abs(new_pwm_l - self.pwm[0]) > 0):
+                            prev_i = self.error_buf_len - ind -1
+                        dt = self.timestamps[i-ind]-self.timestamps[i-ind-1]
+                        Ledot += (Lerror_buf[temp_i] - Lerror_buf[prev_i])/dt
+                        Leint += (Lerror_buf[temp_i] - Lerror_buf[prev_i])*dt
+                        Redot += (Rerror_buf[temp_i] - Rerror_buf[prev_i])/dt
+                        Reint += (Rerror_buf[temp_i] - Rerror_buf[prev_i])*dt
+                Ledot /= self.error_buf_len
+                Leint /= self.error_buf_len
+                Redot /= self.error_buf_len
+                Reint /= self.error_buf_len
+                new_pwm_l = np.clip(self.pwm_l + self.kp[0]*Lerror + self.ki[0]*Leint + self.kd[0]*Ledot, 35, 60)
+                new_pwm_r = np.clip(self.pwm_r + self.kp[1]*Rerror + self.ki[1]*Reint + self.kd[1]*Redot, 35, 60)
+                print(new_pwm_l, new_pwm_r, Lerror, self.pwm_l, self.pwm_r)
+                if(abs(new_pwm_l - self.pwm_l) > 1 and abs(Lerror) > 50 and time.perf_counter() - last_updated_l > 0.1):
                     self.pwm0.change_duty_cycle(new_pwm_l)
-                    self.pwm[0] = new_pwm_l
-                if(abs(new_pwm_r - self.pwm[1]) > 0):
+                    self.pwm_l = new_pwm_l
+                    last_updated_l = time.perf_counter()
+                if(abs(new_pwm_r - self.pwm_r) > 1 and abs(Rerror) > 50 and time.perf_counter() - last_updated_r > 0.1):
                     self.pwm1.change_duty_cycle(new_pwm_r)
-                    self.pwm[1] = new_pwm_r
-                # update indices, reset time
-                buf_index += 1
-                if buf_index == 4:
-                    buf_index = 0
-                pid_time = time.perf_counter()
+                    self.pwm_r = new_pwm_r
+                    last_updated_r = time.perf_counter()
+                self.L_pwm[i] = self.pwm_l
+                self.R_pwm[i] = self.pwm_r
+                err_buf_index += 1
+                if err_buf_index >= (self.error_buf_len):
+                    err_buf_index = 0
+
             if self.running == 0:
                 break
         
     def update_speed(self, rpm: int):
-        print("Speed Update", rpm)
+        num_steps = int((rpm - self.desired_speed) / 500)
+        for step in range(num_steps):   
+            self.desired_speed = self.desired_speed + 500
+            print("setting speed to: ", self.desired_speed)
+            time.sleep(0.2)
+            
         self.desired_speed = rpm
+        print("setting speed to: ", self.desired_speed)
+#         self.pwm1.change_duty_cycle(rpm)
+#         self.pwm0.change_duty_cycle(rpm)
     
     def start_thread(self):
         self.running = True
