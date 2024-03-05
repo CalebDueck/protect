@@ -32,6 +32,7 @@ fig, ax = plt.subplots()
 # ax.scatter(range(0, len(time_between)),time_between)
 ax.scatter(left_time, left_speed, color = 'g', 
          marker = 'o',label = "left speed")
+
 ax.scatter(left_time, right_speed, color = 'r', 
          marker = 'o',label = "right speed")
 # ax1 = ax.twinx()
@@ -44,4 +45,5 @@ ax.scatter(left_time, right_speed, color = 'r',
 # ax.set_xlim([30,70])
 ax.grid() 
 ax.legend() 
+
 plt.show() 

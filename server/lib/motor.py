@@ -25,6 +25,7 @@ class launcher_motors:
         
         # set speed control params
         self.desired_speed = 0
+
         self.pwm_l = 0
         self.pwm_r = 0
         self.kp = [0.001, 0.004]
@@ -32,12 +33,15 @@ class launcher_motors:
         self.kd = [0.0001,0.0001]
         
         # setup arrays for storing speed
-        self.timestamps = [-1] * 10_000
-        self.L_speed = [-1] * 10_000
-        self.R_speed = [-1] * 10_000
-        self.timestamps[0] = time.perf_counter()
-        self.L_speed[0] = 0
-        self.R_speed[0] = 0
+        self.R_timestamps = [-1] * 10_000
+        self.L_timestamps = [-1] * 10_000
+        self.L_speeds = [-1] * 10_000
+        self.R_speeds = [-1] * 10_000
+        
+        self.R_timestamps[0] = time.perf_counter()
+        self.L_timestamps[0] = time.perf_counter()
+        self.L_speeds[0] = 0
+        self.R_speeds[0] = 0
         self.motorThread = 0
         self.L_pwm = [-1] * 10_000
         self.R_pwm = [-1] * 10_000
@@ -56,6 +60,7 @@ class launcher_motors:
         with open("speeds.csv", 'w', newline='') as myfile:
             wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
             wr.writerows(zip(self.L_speed, self.R_speed, self.timestamps, self.L_pwm, self.R_pwm))
+
         print('\r\nSIGINT or CTRL-C detected. Exiting gracefully')
         self.motorThread.join()
         exit(0)
@@ -67,17 +72,15 @@ class launcher_motors:
         self.pwm1.start(0)
         
         # read initial HAL sensors values
-        old_value_L = GPIO.input(self.left_HAL)
-        old_value_R = GPIO.input(self.right_HAL)
+        old_value = [GPIO.input(self.left_HAL),GPIO.input(self.right_HAL)]
         
         # read initial time for speed calcs
-        old_time = time.perf_counter()
+        old_time = [time.perf_counter(), time.perf_counter()] # .0 = left, .1 = right
+        pid_time = time.perf_counter()
         
         # setup count variables for HAL sensor
-        count_L = 0
-        count_R = 0
-        
-        i = 0
+        count = [0,0] # count.0 = left count, count.1 = right count
+        i = [0, 0]
         
         Lerror_buf = [0] * self.error_buf_len
         Rerror_buf = [0] * self.error_buf_len
@@ -89,14 +92,16 @@ class launcher_motors:
         last_updated_r = time.perf_counter()
 
         GPIO.setmode(GPIO.BCM)
+
         
         while 1:
             # increment left count on rising edge
-            if GPIO.input(self.left_HAL) != old_value_L:
-                if old_value_L == 0:
-                    count_L+=1
-                old_value_L = not old_value_L
+            if GPIO.input(self.left_HAL) != old_value[0]:
+                if old_value[0] == 0:
+                    count[0] += 1
+                old_value[0] = not old_value[0]
             # increment right count on rising edge
+
             if GPIO.input(self.right_HAL) != old_value_R:
                 if old_value_R == 0:
                     count_R+=1
@@ -126,14 +131,17 @@ class launcher_motors:
 #                 print(Lerror)
                 Lerror_buf[err_buf_index] = Lerror
                 Rerror_buf[err_buf_index] = Rerror
+
                 Ledot = 0
                 Leint = 0
                 Redot = 0
                 Reint = 0
+
                 if i > self.error_buf_len:
                     for ind in range(self.error_buf_len):
                         temp_i = err_buf_index - ind
                         prev_i = err_buf_index - ind - 1
+
                         if temp_i < 0:
                             temp_i = self.error_buf_len - ind
                         if prev_i < 0 :
@@ -163,6 +171,7 @@ class launcher_motors:
                 err_buf_index += 1
                 if err_buf_index >= (self.error_buf_len):
                     err_buf_index = 0
+
             if self.running == 0:
                 break
         
@@ -172,6 +181,7 @@ class launcher_motors:
             self.desired_speed = self.desired_speed + 500
             print("setting speed to: ", self.desired_speed)
             time.sleep(0.2)
+            
         self.desired_speed = rpm
         print("setting speed to: ", self.desired_speed)
 #         self.pwm1.change_duty_cycle(rpm)

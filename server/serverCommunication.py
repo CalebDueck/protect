@@ -5,15 +5,18 @@ import sys
 from include.defines import NetworkEvents
 
 class ServerThread:
-    def __init__(self, host='activateMotor.local', port=12345, app=None):
+    def __init__(self, host='activateMotor.local', port=12345, app=None, dummy_server=False):
         self.host = host
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_sockets = []
         self.outgoing_message_queue = queue.Queue()
         self.app = app
+        self.dummy_server = dummy_server
 
     def start(self):
+        if self.dummy_server:
+            return
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(5)
         print(f"Server listening on {self.host}:{self.port}")
@@ -99,7 +102,7 @@ class ServerThread:
         self.add_message(message)
     
     def send_end(self):
-        message = "SERVER,END_GAME\n"
+        message = "Server,END_GAME\n"
         self.add_message(message)
 
 if __name__ == "__main__":

@@ -7,11 +7,12 @@ import time
 import os
 
 class BaseServerGame(ABC):
-    def __init__(self, width, height, host, port):
+    def __init__(self, width, height, host, port, dummy_server=False):
         os.putenv('SDL_FBDEV','/dev/fb0')
         pygame.init()
         self.host = host
         self.port = port
+        self.dummy_server = dummy_server
         # Constants
         self.WIDTH, self.HEIGHT = width, height
 
@@ -44,9 +45,13 @@ class BaseServerGame(ABC):
         self.game_data = None
 
     def connect_client(self):
-        self.server = ServerThread(host=self.host, port=self.port, app=self)
+
+        self.server = ServerThread(host=self.host, port=self.port, app=self, dummy_server=self.dummy_server)
 
         self.server.start()
+        if self.dummy_server:
+            self.event_queue.put({"type": NetworkEvents.EVENT_INITIALIZE_GAME, "message": {"address": '', "message": 'Client,INITIALIZE_GAME,1\n'}})
+            self.event_queue.put({"type": NetworkEvents.EVENT_START, "message": {"address":'', "message": 'Client,START_GAME\n'}})
 
     def commonEvents(self, event):
         if event.type == pygame.QUIT:

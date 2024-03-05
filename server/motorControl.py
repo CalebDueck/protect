@@ -6,12 +6,16 @@ import enum
 import json
 import time 
 from serverGame import *
-
+from lib.motor import launcher_motors
+from lib.arduino_serial_comm import *
 class MotorControllerMainApp(BaseServerGame):
-    def __init__(self, width, height, host, port):
-        super().__init__(width, height, host, port)
+    def __init__(self, width, height, host, port, dummy_server=False):
+        super().__init__(width, height, host, port, dummy_server=dummy_server)
 
         self.impreciseHitBoxes = []
+        self.launcher_motors = launcher_motors(16,26)
+        self.launcher_motors.start_thread()
+        self.arduino = ArduinoSerial("COM4", 9600)
 
     def reset_game(self):
         pass
@@ -39,7 +43,7 @@ class MotorControllerMainApp(BaseServerGame):
             pygame.time.Clock().tick(30)
 
     def read_game_file(self):
-        with open('server/motorController.json', 'r') as file:
+        with open('motorController.json', 'r') as file:
             self.game_data = json.load(file)   
 
     def update_information(self):
@@ -65,14 +69,18 @@ class MotorControllerMainApp(BaseServerGame):
             command_name = command['command_name']
             location_x = command['location_x']
             location_y = command['location_y']
+            height = command['height']
+            yaw = command['yaw']
             points = command['points']
             speed = command['speed']
             if not 'completed' in command: 
-                # pass speed to motor here
+                self.launcher_motors.update_speed(speed)
                 print("Shot ball for command_id", command_id, "at speed", speed)
+                message = f"{height},{yaw}\n"
+                self.arduino.write(message)
                 command['completed'] = True
 
 if __name__ == "__main__":
-    motor_controller_main_app = MotorControllerMainApp(800,600,'activateMotor.local',12345)
+    motor_controller_main_app = MotorControllerMainApp(800,600,'activateMotor.local',12345, True)
     motor_controller_main_app.connect_client()
     motor_controller_main_app.run()

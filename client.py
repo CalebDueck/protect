@@ -56,6 +56,8 @@ class ClientThread:
                                     self.app.event_queue.put({"type": NetworkEvents.EVENT_LIFE_UPDATE, "message": {"address": self.host, "message": line}})
                                 elif fullCommand[1] == "ACK":
                                     self.app.event_queue.put({"type": NetworkEvents.EVENT_ACK, "message": {"address": self.host, "message": line}})
+                                elif fullCommand[1] == "END_GAME":
+                                    self.app.event_queue.put({"type": NetworkEvents.EVENT_END_GAME, "message": {"address": self.host, "message": line}})
         except Exception as e:
             print(f"Error in message receiver: {e}")
 
