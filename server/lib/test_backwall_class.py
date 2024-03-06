@@ -1,8 +1,8 @@
 from backwall import *
 import time
 
-top_half_pin = 13
-bot_half_pin = 18
+top_half_pin = 18
+bot_half_pin = 13
 
 
 count = 1
@@ -14,19 +14,23 @@ def main():
         while(True):
             global count
             
+            # if count%60 == 0:
+            backwall.turn_off_all()
             print(count)
             # backwall.top_strip.set_segment_color(count%30, c.blue)
             # time.sleep(1)
             # backwall.top_strip.set_segment_color(count%30, c.no_light)
 
             backwall.set_color(count%60, c.blue)
-            time.sleep(0.1)
-            backwall.turn_off_segment(count%60)
+
+            backwall.show()
             count+=1
+            time.sleep(0.5)
 
 
     except KeyboardInterrupt:
         backwall.turn_off_all()
+        backwall.show()
         time.sleep(0.1)
 
 

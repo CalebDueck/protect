@@ -18,9 +18,10 @@ class LEDSegment:
                 self.strip.setPixelColor(i, color)
             else:
                 self.strip.setPixelColor(i, c.no_light)
-        time.sleep(0.01)
+            
+            #time.sleep(0.01)
 
-        self.strip.show()
+        #self.strip.show()
 
 
 
@@ -40,7 +41,7 @@ class LEDStripController:
         self.LED_PIN = pin
         self.LED_FREQ_HZ = 800000 #maybe change
         self.LED_DMA = 10
-        self.LED_BRIGHTNESS = 30 #max is 255
+        self.LED_BRIGHTNESS = 10 #max is 255
         self.LED_INVERT = False
 
         #fix sync issues
@@ -90,3 +91,6 @@ class LEDStripController:
 
     def turn_off_leds(self):
         self.set_strip_color(c.no_light)
+
+    def show(self):
+        self.strip.show()

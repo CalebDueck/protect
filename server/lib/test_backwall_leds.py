@@ -4,9 +4,9 @@ import neopixel
 import board
 
 led_pins = [13, 18] 
-num_segments_per_row = 10
-num_leds_per_row = 180
-num_rows_per_pin = 3
+num_segments_per_row = 1
+num_leds_per_row = 30
+num_rows_per_pin = 1
 
 segment_def_arr = list()
 for i in range(num_segments_per_row*num_rows_per_pin+1):
@@ -26,7 +26,7 @@ def main():
 
     try:
         #nothing
-        print("Starting button test")
+        print("Starting led test")
         # time.sleep(0.5)
         # backwall_strip2.set_strip_color(color=c.green)
         # time.sleep(5)
@@ -52,7 +52,8 @@ def main():
 
             # rainbow segments
             for i in range(len(segment_def_arr)-1):
-                time.sleep(0.3)
+                print("Switch led test")
+                time.sleep(0.5)
                 if(count%12>6):
                     backwall_strip1.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0) 
                 

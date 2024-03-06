@@ -39,19 +39,19 @@ class LEDBackwall:
 
     def set_color(self, square_index, color, off_vs_on=0):
         top_strip, strip_index = self.square_index_to_strip_index(square_index)
-        print("Index",square_index)
-        print("Top strip",top_strip)
-        print("strip intx", strip_index)
+        # print("Index",square_index)
+        # print("Top strip",top_strip)
+        # print("strip intx", strip_index)
         
         if strip_index == -1:
-            print("Invalid square_index received")
+            # print("Invalid square_index received")
             return
         
         if top_strip==True:
-            print("TOP out")
+            # self.top_strip.set_segment_color(strip_index, c.no_light) 
             self.top_strip.set_segment_color(strip_index, color, off_vs_on) 
         elif top_strip==False:
-            print("BIP out")
+            # self.bot_strip.set_segment_color(strip_index, c.no_light) 
             self.bot_strip.set_segment_color(strip_index, color, off_vs_on) 
 
     def turn_off_segment(self, square_index):
@@ -68,6 +68,12 @@ class LEDBackwall:
     def turn_off_all(self):
         self.top_strip.turn_off_leds()
         self.bot_strip.turn_off_leds()
+        self.show()
+
+    def show(self):
+        self.top_strip.show()
+        self.bot_strip.show()
+
         
 
 
