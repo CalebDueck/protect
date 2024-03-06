@@ -5,8 +5,8 @@ import board
 
 led_pins = [13, 18] 
 num_segments_per_row = 1
-num_leds_per_row = 30
-num_rows_per_pin = 1
+num_leds_per_row = 180
+num_rows_per_pin = 3
 
 segment_def_arr = list()
 for i in range(num_segments_per_row*num_rows_per_pin+1):
@@ -50,23 +50,30 @@ def main():
             # backwall_strip2.set_segment_color(segment_index=count%29, color=c.color_list[(count)%len(c.color_list)], off_vs_on=2)
 
 
+            backwall_strip1.turn_off_leds()
+            backwall_strip1.show()
+            backwall_strip2.turn_off_leds()
+            backwall_strip2.show()
             # rainbow segments
+            print("Switch led test")
             for i in range(len(segment_def_arr)-1):
-                print("Switch led test")
-                time.sleep(0.5)
-                if(count%12>6):
-                    backwall_strip1.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0) 
+                # if(count%12>6):
+                backwall_strip1.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0) 
                 
-                else:
-                    backwall_strip2.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0)
+                # else:
+                backwall_strip2.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0)
 
-
+            
+            backwall_strip1.show()
+            backwall_strip2.show()
             time.sleep(0.5)
             count = (count+1)
 
     except KeyboardInterrupt:
         backwall_strip1.turn_off_leds()
         backwall_strip2.turn_off_leds()
+        backwall_strip1.show()
+        backwall_strip2.show()
         # backwall_strip1.fill((0, 0, 0))
         # backwall_strip2.fill((0, 0, 0))
         time.sleep(0.1)

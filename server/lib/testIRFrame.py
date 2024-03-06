@@ -1,7 +1,8 @@
 import pygame
 import sys
-from backwall import LEDBackwall
+from backwall_single_strip import LEDBackwall_single
 from color_helpers import c
+import time
 
 # Initialize pygame
 pygame.init()
@@ -20,7 +21,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
-led = LEDBackwall(13,18)
+led = LEDBackwall_single(13)
 
 # Create the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -29,32 +30,32 @@ pygame.display.set_caption("Grid Clicker")
 # Create a 2D array to represent the grid
 grid = [[False for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
 grid_update = [[True for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
-def convert_color_to_LED_color(self,color):
+prev_time = [[0 for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
+def convert_color_to_LED_color(color):
         led_color = None
-        if color == self.WHITE:
+        if color == WHITE:
             led_color = c.white
-        elif color == self.RED:
+        elif color == RED:
             led_color = c.red
-        elif color == self.BLUE:
-            led_color = c.blue
-        elif color == self.ORANGE:
-            led_color = c.orange
-        elif color == self.GREEN:
-            led_color = c.green
+
         return led_color
 
 def draw_grid():
+    update = False
+    #led.set_color_all(c.white)
     for row in range(GRID_HEIGHT):
         for col in range(GRID_WIDTH):
             color = WHITE if not grid[row][col] else RED
             if grid_update[row][col]:
-                if color != WHITE:
-                    led.set_color(row*GRID_WIDTH+col,c.red, 0)
-                else:
-                    led.turn_off_segment(row*GRID_WIDTH+col)
+                update = True
+                led.set_color(row*GRID_WIDTH+col,convert_color_to_LED_color(color), 0)
+                # else:
+                #     led.turn_off_segment(row*GRID_WIDTH+col)
                 grid_update[row][col] = False
                 print("Updating LED number: " + str(row*GRID_WIDTH+col))
             pygame.draw.rect(screen, color, (col * RECT_SIZE, row * RECT_HEIGHT, RECT_SIZE, RECT_HEIGHT))
+    if update:
+        led.show()
 
 # Main game loop
 running = True
@@ -70,7 +71,7 @@ while running:
             col = int(x // RECT_SIZE)
             row = int(y // RECT_HEIGHT)
             grid[row][col] = not grid[row][col]
-            grid_update[row][col] = True
+            grid_update[row][col] = True 
 
     # Clear the screen
     screen.fill(BLACK)

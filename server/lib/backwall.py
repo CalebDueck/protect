@@ -48,10 +48,10 @@ class LEDBackwall:
             return
         
         if top_strip==True:
-            # self.top_strip.set_segment_color(strip_index, c.no_light) 
+            self.top_strip.set_segment_color(strip_index, c.no_light) 
             self.top_strip.set_segment_color(strip_index, color, off_vs_on) 
         elif top_strip==False:
-            # self.bot_strip.set_segment_color(strip_index, c.no_light) 
+            self.bot_strip.set_segment_color(strip_index, c.no_light) 
             self.bot_strip.set_segment_color(strip_index, color, off_vs_on) 
 
     def turn_off_segment(self, square_index):
@@ -76,67 +76,3 @@ class LEDBackwall:
 
         
 
-
-
-
-
-
-
-
-count = 1
-
-# backwall_strip1 = neopixel.NeoPixel(board.D18, num_leds_per_row*num_rows_per_pin, brightness=0.1)
-# backwall_strip2 = neopixel.NeoPixel(board.D12, num_leds_per_row*num_rows_per_pin, brightness=0.1)
-
-
-
-def main():
-    #see test_button for how to get arguments
-
-    try:
-        #nothing
-        print("Starting button test")
-        # time.sleep(0.5)
-        # backwall_strip2.set_strip_color(color=c.green)
-        # time.sleep(5)
-
-        # backwall_strip1.set_strip_color(color=c.blue)
-        # backwall_strip2.fill((255, 0, 0))
-        # time.sleep(0.1)
-        # backwall_strip1.fill((255, 0, 0))
-
-        while(True):
-            global count
-            
-            #set only one segment at a time            
-            # time.sleep(0.05)
-
-            # backwall_strip1.set_segment_color(segment_index=(29+count-1)%29, color=c.no_light, off_vs_on=2) 
-            # backwall_strip2.set_segment_color(segment_index=(29+count-1)%29, color=c.no_light, off_vs_on=2)
-            # time.sleep(0.05)
-
-            # backwall_strip1.set_segment_color(segment_index=count%29, color=c.color_list[(count)%len(c.color_list)], off_vs_on=2) 
-            # backwall_strip2.set_segment_color(segment_index=count%29, color=c.color_list[(count)%len(c.color_list)], off_vs_on=2)
-
-
-            # rainbow segments
-            for i in range(len(segment_def_arr)-1):
-                #time.sleep(0.01)
-                backwall_strip1.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0) 
-                
-                #time.sleep(0.01)
-                backwall_strip2.set_segment_color(segment_index=i, color=c.color_list[(count+i)%len(c.color_list)], off_vs_on=0)
-
-
-            count = (count+1)%(num_segments_per_row*num_rows_per_pin)
-
-    except KeyboardInterrupt:
-        backwall_strip1.turn_off_leds()
-        backwall_strip2.turn_off_leds()
-        # backwall_strip1.fill((0, 0, 0))
-        # backwall_strip2.fill((0, 0, 0))
-        time.sleep(0.1)
-
-
-if __name__ == '__main__':
-    main()
