@@ -31,6 +31,7 @@ pygame.display.set_caption("Grid Clicker")
 grid = [[False for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
 grid_update = [[True for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
 prev_time = [[0 for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
+
 def convert_color_to_LED_color(color):
         led_color = None
         if color == WHITE:
@@ -70,8 +71,10 @@ while running:
             x, y = event.x*WIDTH, event.y*HEIGHT
             col = int(x // RECT_SIZE)
             row = int(y // RECT_HEIGHT)
-            grid[row][col] = not grid[row][col]
-            grid_update[row][col] = True 
+            if time.time() - prev_time[row][col] > 0.25:
+                grid[row][col] = not grid[row][col]
+                grid_update[row][col] = True
+                prev_time[row][col] = time.time()
 
     # Clear the screen
     screen.fill(BLACK)
