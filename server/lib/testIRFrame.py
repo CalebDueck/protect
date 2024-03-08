@@ -49,9 +49,10 @@ def draw_grid():
             color = WHITE if not grid[row][col] else RED
             if grid_update[row][col]:
                 update = True
-                led.set_color(row*GRID_WIDTH+col,convert_color_to_LED_color(color), 0)
-                # else:
-                #     led.turn_off_segment(row*GRID_WIDTH+col)
+                if color != WHITE:
+                    led.set_color(row*GRID_WIDTH+col,convert_color_to_LED_color(color), 0)
+                else:
+                    led.turn_off_segment(row*GRID_WIDTH+col)
                 grid_update[row][col] = False
                 print("Updating LED number: " + str(row*GRID_WIDTH+col))
             pygame.draw.rect(screen, color, (col * RECT_SIZE, row * RECT_HEIGHT, RECT_SIZE, RECT_HEIGHT))

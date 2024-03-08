@@ -30,7 +30,7 @@ class BackWallMainApp(BaseServerGame):
 
         self.LED_control = LEDBackwall_single(13)
 
-        self.debouncing = 0.25
+        self.debouncing = 0
 
     def reset_game(self):
         for rect in self.rectangles:
@@ -98,6 +98,10 @@ class BackWallMainApp(BaseServerGame):
                                     if matching_entry is not None:
                                         self.lives = -1
                                         matching_entry[1] = 1
+                                        rect[2] = self.RED
+                                        rect[5] = True
+                                        rect[6] = time.time()
+                                        matching_entry[2] = rect
 
                             
                             self.server.point_update(points=self.points,lives=self.lives)
@@ -163,10 +167,13 @@ class BackWallMainApp(BaseServerGame):
                             updated_list = [entry for entry in self.impreciseHitBoxes if entry[0] != command_id]
                             self.impreciseHitBoxes = updated_list
                         command['completed'] = True
+                        if not matching_entry[2] is None:
+                            matching_entry[2][2] = self.WHITE
+                            matching_entry[2][5] = True
 
                 elif not 'completed' in command:
                     if matching_entry is None:
-                        self.impreciseHitBoxes.append([command_id,0])
+                        self.impreciseHitBoxes.append([command_id,0, None])
                         print("Command ID: " + str(command_id) + " ball has been shot")
                     
             else:
@@ -209,8 +216,8 @@ class BackWallMainApp(BaseServerGame):
                 elif not 'completed' in command:
                     if matching_entry[4] != True:
                         if (matching_entry[3] > 0):
-                            matching_entry[5] = matching_entry[2] != self.RED
-                            matching_entry[2] = self.RED
+                            matching_entry[5] = matching_entry[2] != self.BLUE
+                            matching_entry[2] = self.BLUE
                         elif matching_entry[3] < 0:
                             matching_entry[5] = matching_entry[2] != self.BLUE
                             matching_entry[2] = self.BLUE
@@ -241,6 +248,6 @@ class BackWallMainApp(BaseServerGame):
            
 
 if __name__ == "__main__":
-    backWallMainApp = BackWallMainApp(1920,1080,'192.168.1.141',12345)
+    backWallMainApp = BackWallMainApp(1920,1080,'192.168.1.141',12345, True)
     backWallMainApp.connect_client()
     backWallMainApp.run()

@@ -15,7 +15,9 @@ def main():
             global count
             
             # if count%60 == 0:
-            backwall.set_color_all(c.white)
+            # backwall.set_color_all(c.white)
+            backwall.turn_off_all()
+            
             print(count)
             # backwall.top_strip.set_segment_color(count%30, c.blue)
             # time.sleep(1)
