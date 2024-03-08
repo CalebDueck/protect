@@ -6,7 +6,8 @@ import enum
 import json
 import time 
 from serverGame import *
-from lib.backwall import LEDBackwall
+# from lib.backwall import LEDBackwall
+from lib.backwall_single_strip import LEDBackwall_single
 from lib.color_helpers import c
 
 class BackWallMainApp(BaseServerGame):
@@ -23,11 +24,13 @@ class BackWallMainApp(BaseServerGame):
         for y in range(0, self.HEIGHT, self.RECT_HEIGHT):
             for x in range(0, self.WIDTH, self.RECT_WIDTH):            
                 rect = pygame.Rect(x, y, self.RECT_WIDTH, self.RECT_HEIGHT)
-                self.rectangles.append([rect, False, self.WHITE, 0, False, True]) # rectangle, clicked, colour, points when clicked, successfully completed, update colour
+                self.rectangles.append([rect, False, self.WHITE, 0, False, True, 0]) # rectangle, clicked, colour, points when clicked, successfully completed, update colour, prev update color
 
         self.impreciseHitBoxes = []
 
-        self.LED_control = LEDBackwall(13, 18)
+        self.LED_control = LEDBackwall_single(13)
+
+        self.debouncing = 0.25
 
     def reset_game(self):
         for rect in self.rectangles:
@@ -43,19 +46,21 @@ class BackWallMainApp(BaseServerGame):
 
     # Function to draw the grid of rectangles
     def draw_grid(self):
+        update = False
         for index, rect in enumerate(self.rectangles):
             pygame.draw.rect(self.screen, rect[2], rect[0])
             if rect[5]:
                 led_color = self.convert_color_to_LED_color(rect[2])
-                if led_color:
-                
+                if led_color:  
+                    update = True
                     if led_color == c.white:
                         self.LED_control.turn_off_segment(index)
                     else:
                         self.LED_control.set_color(index, led_color, 0)
                 print("Setting Color of " + str(index) + "to " + str(rect[2]))
                 rect[5] = False
-
+        if update:
+            self.LED_control.show()
 
     def run(self):
         self.start_game = False
@@ -71,7 +76,7 @@ class BackWallMainApp(BaseServerGame):
                         continue
                     # Check if the mouse click is inside any rectangle
                     for rect in self.rectangles:
-                        if self.is_inside_rect((event.x * self.WIDTH,event.y * self.HEIGHT), rect[0]):                          
+                        if self.is_inside_rect((event.x * self.WIDTH,event.y * self.HEIGHT), rect[0]) and time.time() - rect[6] > self.debouncing:                           
 
                             if (rect[3] > 0 and rect[4] == False):
                                 rect[4] = True
@@ -79,12 +84,14 @@ class BackWallMainApp(BaseServerGame):
                                 rect[3] = 0
                                 rect[2] = self.GREEN
                                 rect[5] = True
+                                rect[6] = time.time()
                             elif (rect[3] < 0 and rect[4] == False):
                                 rect[4] = True
                                 self.lives = -1
                                 rect[3] = 0
                                 rect[2] = self.ORANGE
                                 rect[5] = True
+                                rect[6] = time.time()
                             else:
                                 if rect[2] != self.GREEN:
                                     matching_entry = next((entry for entry in self.impreciseHitBoxes if entry[1] == 0), None)
