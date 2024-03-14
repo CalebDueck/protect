@@ -9,7 +9,7 @@ import json
 class MainGameStates(enum.IntEnum):
     START_SCREEN = 0
     LEVEL_SELECT = 1
-    LEVEL_1 = 2
+    LEVEL_SELECTED = 2
     LEVEL_2 = 3
     RESET_GAME = 4
     READY_WAIT = 5
@@ -24,8 +24,8 @@ class MainGame:
         self.screen_height = screen_height
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Pygame Start Screen")
-        self.font = pygame.font.Font(None, 36)
-        self.countdownFont = pygame.font.Font(None, 100)
+
+        self.countdownFont = pygame.font.Font(None, 300)
 
         # Set up colors
         self.white = (255, 255, 255)
@@ -34,19 +34,25 @@ class MainGame:
 
         HEART_IMAGE_PATH = 'heart.png'
         self.heart_image = pygame.image.load(HEART_IMAGE_PATH)
-        self.heart_size = (120,120)
+        self.heart_size = (300,300)
         self.heart_image = pygame.transform.scale(self.heart_image, self.heart_size)  # Adjust the size if needed
 
         self.transition_timer = 0
         self.transition_time = 500
         # Set up buttons
-        self.start_button = pygame.Rect(300, 200, 200, 50)
-        self.level1_button = pygame.Rect(300, 300, 200, 50)
-        self.level2_button = pygame.Rect(300, 400, 200, 50)
-        self.ready_button = pygame.Rect(300, 500, 200, 50)
-        self.play_again_button = pygame.Rect(300, 600, 200, 50)
+        self.start_button = pygame.Rect(0, 0, 400, 100)
+        self.start_button.center = (self.screen_width//2, 200)
+        self.ready_button = pygame.Rect(0, 0, 400, 100)
+        self.ready_button.center = (self.screen_width//2, 500)
+
+        self.play_again_button = pygame.Rect(0, 0, 400, 100)
+        self.play_again_button.center = (self.screen_width//2, 800)
+
+        self.font_size = 80
+        self.font = pygame.font.SysFont(None, self.font_size)
 
         # Set up state
+
         self.state = MainGameStates.START_SCREEN
 
         # Set up game variables
@@ -55,6 +61,9 @@ class MainGame:
 
         self.input_active = True
         self.name = ""
+
+        self.level_input_active = False
+        self.level = ""
 
         self.serversAddresses = serversAddresses
         self.servers = []
@@ -93,20 +102,30 @@ class MainGame:
                         self.name = self.name[:-1]
                     else:
                         self.name += event.unicode
+                if self.level_input_active:
+                    if event.key == pygame.K_RETURN:
+                        try:
+                            level_chosen = int(self.level)
+                            if level_chosen > 0 and level_chosen <= 10:
+                                self.state = MainGameStates.LEVEL_SELECTED
+                                self.level_input_active = False
+                                message = "Client,INITIALIZE_GAME," + str(level_chosen) + "\n"
+                                print(message)
+                                self.sendMessageToAllServers(message)
+                            else:
+                                self.level = ""
+                        except ValueError:
+                            self.level_input_active = True
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.level = self.level[:-1]
+                    else:
+                        self.level += event.unicode if event.unicode.isnumeric() else ""
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # Check button clicks
                 if self.start_button.collidepoint(event.pos):
                     self.state = MainGameStates.LEVEL_SELECT
-                elif self.level1_button.collidepoint(event.pos):
-                    print("Starting Level 1")
-                    self.state = MainGameStates.LEVEL_1
-                    self.sendMessageToAllServers("Client,INITIALIZE_GAME,1\n")
-                    # Add your code to start level 1 here
-                elif self.level2_button.collidepoint(event.pos):
-                    print("Starting Level 2")
-                    self.state = MainGameStates.LEVEL_2
-                    self.sendMessageToAllServers("Client,INITIALIZE_GAME,2\n")
-                    # Add your code to start level 2 here
+                    self.level_input_active = True
+                    self.level = ""
                 elif self.ready_button.collidepoint(event.pos):
                     print("Game is Ready")
                     self.countdown(5)
@@ -168,7 +187,9 @@ class MainGame:
             if not self.input_active:
                 pygame.draw.rect(self.screen, self.black, self.start_button)
                 text = self.font.render("Start", True, self.white)
-                self.screen.blit(text, (self.start_button.x + 70, self.start_button.y + 15))
+                text_rect = text.get_rect()
+                text_rect.center = self.start_button.center
+                self.screen.blit(text, text_rect)
 
             # Display user input
             input_text = self.font.render("Enter your name: " + self.name, True, self.black)
@@ -178,29 +199,28 @@ class MainGame:
             pygame.draw.rect(self.screen, self.black, (input_rect.left, input_rect.bottom, input_rect.width, 2))
 
         elif self.state == MainGameStates.LEVEL_SELECT:
-            pygame.draw.rect(self.screen, self.black, self.level1_button)
-            text = self.font.render("Level 1", True, self.white)
-            self.screen.blit(text, (self.level1_button.x + 60, self.level1_button.y + 15))
 
-            pygame.draw.rect(self.screen, self.black, self.level2_button)
-            text = self.font.render("Level 2", True, self.white)
-            self.screen.blit(text, (self.level2_button.x + 60, self.level2_button.y + 15))
+            # Display user input
+            input_level_text = self.font.render("Select Level (0-10): " + self.level, True, self.black)
+            input_level_rect = input_level_text.get_rect(center=(self.screen_width // 2, self.screen_height // 1.5))
+            self.screen.blit(input_level_text, input_level_rect)
 
+            pygame.draw.rect(self.screen, self.black, (input_level_rect.left, input_level_rect.bottom, input_level_rect.width, 2))
             # Display points and lives
             points_text = self.font.render(f"Points: {self.points}", True, self.black)
             self.screen.blit(points_text, (10, 10))
 
             lives_text = self.font.render(f"Lives: {self.lives}", True, self.black)
-            self.screen.blit(lives_text, (10, 50))
+            self.screen.blit(lives_text, (10, 100))
 
-        elif self.state == MainGameStates.LEVEL_1 or self.state == MainGameStates.LEVEL_2 or self.state == MainGameStates.ACTIVE_GAME:
+        elif self.state == MainGameStates.LEVEL_SELECTED or self.state == MainGameStates.LEVEL_2 or self.state == MainGameStates.ACTIVE_GAME:
             # Display points and lives
             points_text = self.font.render(f"Points: {self.points}", True, self.black)
             text_rect = points_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
             self.screen.blit(points_text, text_rect)
 
             lives_text = self.font.render(f"Lives: {self.lives}", True, self.black)
-            text_rect = lives_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 30))
+            text_rect = lives_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 70))
             self.screen.blit(lives_text, text_rect)
             if self.transition_timer > 0:
                 self.show_transition_screen(self.transition_time)
@@ -212,7 +232,9 @@ class MainGame:
         elif self.state == MainGameStates.READY_WAIT:
             pygame.draw.rect(self.screen, self.black, self.ready_button)
             text = self.font.render("Ready?", True, self.white)
-            self.screen.blit(text, (self.ready_button.x + 60, self.ready_button.y + 15))
+            text_rect = text.get_rect()
+            text_rect.center = self.ready_button.center
+            self.screen.blit(text, text_rect)
 
         elif self.state == MainGameStates.END_GAME:
             # Display points
@@ -222,7 +244,9 @@ class MainGame:
 
             pygame.draw.rect(self.screen, self.black, self.play_again_button)
             text = self.font.render("Play Again?", True, self.white)
-            self.screen.blit(text, (self.play_again_button.x + 40, self.play_again_button.y + 15))
+            text_rect = text.get_rect()
+            text_rect.center = self.play_again_button.center
+            self.screen.blit(text, text_rect)
 
         pygame.display.flip()
 
@@ -251,8 +275,8 @@ class MainGame:
 
     # Function to display transition screen
     def show_transition_screen(self, transition_time):
-        font = pygame.font.Font(None, 36)
-        text = font.render("You lost a life!", True, (255, 0, 0))
+
+        text = self.font.render("You lost a life!", True, (255, 0, 0))
         text_rect = text.get_rect(center=(self.screen_width // 2, self.screen_height // 4))
         self.screen.blit(text, text_rect)
         pygame.display.flip()
