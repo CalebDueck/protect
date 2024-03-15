@@ -1,5 +1,5 @@
 from rpi_ws281x import *
-from .color_helpers import c
+from color_helpers import c
 import time
 import RPi.GPIO as GPIO
 
@@ -75,7 +75,7 @@ class LEDStripController:
                 if segment_border_num_array[i+1]>num_leds:
                     print("ERROR: segment index %d is out of range", i+1)
                 else:
-                    seg_i = LEDSegment(self.strip, segment_border_num_array[i], segment_border_num_array[i+1])
+                    seg_i = LEDSegment(self.strip, segment_border_num_array[i], segment_border_num_array[i+1]-1)
                     self.segments.append(seg_i)
 
 
