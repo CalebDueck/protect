@@ -1,5 +1,9 @@
 import pygame
 import sys
+import csv
+import time
+from datetime import datetime
+
 from backwall_single_strip import LEDBackwall_single
 from color_helpers import c
 import time
@@ -14,6 +18,7 @@ GRID_WIDTH = 10
 GRID_HEIGHT = 6
 RECT_SIZE = WIDTH // GRID_WIDTH
 RECT_HEIGHT = HEIGHT // GRID_HEIGHT
+current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Colors
 WHITE = (255, 255, 255)
@@ -31,6 +36,15 @@ pygame.display.set_caption("Grid Clicker")
 grid = [[False for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
 grid_update = [[True for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
 prev_time = [[0 for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
+
+# Function to write event data to a CSV file
+def write_to_csv(x, y, row, col, timestamp):
+    filename = f"accuracytest_{current_datetime}.csv"
+    with open(filename, 'a', newline='') as csvfile:
+        fieldnames = ['x', 'y','row', 'col' 'timestamp']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        writer.writerow({'x': x, 'y': y, 'row':row, 'col':col, 'timestamp': timestamp})
 
 def convert_color_to_LED_color(color):
         led_color = None
@@ -77,6 +91,8 @@ while running:
                 grid_update[row][col] = True
                 prev_time[row][col] = time.time()
 
+                # Log event data to CSV
+                write_to_csv(x, y, row, col,  prev_time[row][col])
     # Clear the screen
     screen.fill(BLACK)
 
