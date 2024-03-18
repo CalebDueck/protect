@@ -1,4 +1,4 @@
-from .led_strip_ctrl import *
+from led_strip_ctrl import *
 import time
 import board
 

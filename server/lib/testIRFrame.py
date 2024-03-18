@@ -41,7 +41,7 @@ prev_time = [[0 for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
 def write_to_csv(x, y, row, col, timestamp):
     filename = f"accuracytest_{current_datetime}.csv"
     with open(filename, 'a', newline='') as csvfile:
-        fieldnames = ['x', 'y','row', 'col' 'timestamp']
+        fieldnames = ['x', 'y','row', 'col', 'timestamp']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
         writer.writerow({'x': x, 'y': y, 'row':row, 'col':col, 'timestamp': timestamp})
@@ -68,7 +68,13 @@ def draw_grid():
                 else:
                     led.turn_off_segment(row*GRID_WIDTH+col)
                 grid_update[row][col] = False
-                print("Updating LED number: " + str(row*GRID_WIDTH+col))
+                # print("Updating LED number: " + str(row*GRID_WIDTH+col))
+
+
+            # if color != WHITE:
+            #     led.set_color(row*GRID_WIDTH+col,convert_color_to_LED_color(color), 0)
+            # else:
+            #     led.turn_off_segment(row*GRID_WIDTH+col)
             pygame.draw.rect(screen, color, (col * RECT_SIZE, row * RECT_HEIGHT, RECT_SIZE, RECT_HEIGHT))
     if update:
         led.show()
@@ -76,38 +82,54 @@ def draw_grid():
 # Main game loop
 running = True
 active_fingers = set()
-
+event_happened = False
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            event_happened = True
+            x, y = event.pos
+            col = int(x // RECT_SIZE)
+            row = int(y // RECT_HEIGHT)
+            if time.time() - prev_time[row][col] > 1:
+                grid[row][col] = not grid[row][col]
+                grid_update[row][col] = True
+                prev_time[row][col] = time.time()
+
+                # Log event data to CSV
+                write_to_csv(x, y, row, col, prev_time[row][col])
+
         elif event.type == pygame.FINGERDOWN:
+            event_happened=True
             x, y = event.x*WIDTH, event.y*HEIGHT
             col = int(x // RECT_SIZE)
             row = int(y // RECT_HEIGHT)
-            if time.time() - prev_time[row][col] > 0.25:
+            if time.time() - prev_time[row][col] > 1:
                 grid[row][col] = not grid[row][col]
                 grid_update[row][col] = True
                 prev_time[row][col] = time.time()
 
                 # Log event data to CSV
                 write_to_csv(x, y, row, col,  prev_time[row][col])
-    # Clear the screen
-    screen.fill(BLACK)
+    if event_happened:
+        event_happened=False
+        # Clear the screen
+        screen.fill(BLACK)
 
-    # Draw the grid
-    draw_grid()
+        # Draw the grid
+        draw_grid()
 
-    # # Highlight cells for active touches
-    # for finger_id in active_fingers:
-    #     x, y = pygame.mouse.get_pos()
-    #     col = x // RECT_SIZE
-    #     row = y // RECT_SIZE
-    #     pygame.draw.rect(screen, GREEN, (col * RECT_SIZE, row * RECT_SIZE, RECT_SIZE, RECT_SIZE), 3)
+        # # Highlight cells for active touches
+        # for finger_id in active_fingers:
+        #     x, y = pygame.mouse.get_pos()
+        #     col = x // RECT_SIZE
+        #     row = y // RECT_SIZE
+        #     pygame.draw.rect(screen, GREEN, (col * RECT_SIZE, row * RECT_SIZE, RECT_SIZE, RECT_SIZE), 3)
 
-    # Update the display
-    pygame.display.flip()
+        # Update the display
+        pygame.display.flip()
 
 # Quit pygame
 pygame.quit()
