@@ -45,6 +45,8 @@ def plot_csv_data(filename):
     yticks = np.linspace(0, target_height, 7)
     ax.set_xticks(xticks)
     ax.set_yticks(yticks)
+    ax.set_xlim([0,3000])
+    ax.set_ylim([0,2000])
 
     # Set axis labels and title
     ax.set_xlabel('X (mm)')
