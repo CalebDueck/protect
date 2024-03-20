@@ -41,7 +41,7 @@ class LEDStripController:
         self.LED_PIN = pin
         self.LED_FREQ_HZ = 800000 #maybe change
         self.LED_DMA = 10
-        self.LED_BRIGHTNESS = 30 #max is 255 works pretty good at 30
+        self.LED_BRIGHTNESS = 255 #max is 255 works pretty good at 30
         self.LED_INVERT = False
 
         #fix sync issues
