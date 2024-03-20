@@ -50,7 +50,7 @@ class BaseServerGame(ABC):
 
         self.server.start()
         if self.dummy_server:
-            self.event_queue.put({"type": NetworkEvents.EVENT_INITIALIZE_GAME, "message": {"address": '', "message": 'Client,INITIALIZE_GAME,1\n'}})
+            self.event_queue.put({"type": NetworkEvents.EVENT_INITIALIZE_GAME, "message": {"address": '', "message": 'Client,INITIALIZE_GAME,5\n'}})
             self.event_queue.put({"type": NetworkEvents.EVENT_START, "message": {"address":'', "message": 'Client,START_GAME\n'}})
 
     def commonEvents(self, event):

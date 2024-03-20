@@ -47,6 +47,7 @@ class BackWallMainApp(BaseServerGame):
     # Function to draw the grid of rectangles
     def draw_grid(self):
         update = False
+        #self.LED_control.turn_off_all()
         for index, rect in enumerate(self.rectangles):
             pygame.draw.rect(self.screen, rect[2], rect[0])
             if rect[5]:
@@ -128,7 +129,7 @@ class BackWallMainApp(BaseServerGame):
             pygame.time.Clock().tick(30)
 
     def read_game_file(self):
-        with open('backWallClickGame.json', 'r') as file:
+        with open('cdueck_backWallClickGame.json', 'r') as file:
             self.game_data = json.load(file)   
 
     def update_rects(self):
