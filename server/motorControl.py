@@ -68,11 +68,8 @@ class MotorControllerMainApp(BaseServerGame):
             
             command_id = command['command_id']
             command_name = command['command_name']
-            location_x = command['location_x']
-            location_y = command['location_y']
             height = command['height']
             yaw = command['yaw']
-            points = command['points']
             speed = command['speed']
             if not 'completed' in command: 
                 self.launcher_motors.update_speed(speed)

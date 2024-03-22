@@ -7,103 +7,35 @@
           {
             "command_id": 1,
             "command_name": "Shoot Ball",
-            "time_start": 2,
-            "location_x": 0,
-            "location_y": 0,
-            "height":0,
-            "yaw":0,
-            "speed": 1800,
-            "points": 20
+            "time_start": 60,
+            "height":10,
+            "yaw":30,
+            "speed": 1800
           },
           {
             "command_id": 2,
             "command_name": "Shoot Ball",
-            "time_start": 12,
-            "location_x": 0,
-            "location_y": 0,
-            "height":10,
-            "yaw":20,
-            "speed": 1800,
-            "points": 20
+            "time_start": 65,
+            "height":0,
+            "yaw":30,
+            "speed": 1800
           },
           {
             "command_id": 3,
             "command_name": "Shoot Ball",
-            "time_start": 22,
-            "location_x": 0,
-            "location_y": 0,
-            "height":16,
-            "yaw":5,
-            "speed": 1800,
-            "points": 20
+            "time_start": 70,
+            "height":0,
+            "yaw":-20,
+            "speed": 1800
           },
           {
             "command_id": 4,
             "command_name": "Shoot Ball",
-            "time_start": 32,
-            "location_x": 0,
-            "location_y": 0,
+            "time_start": 75,
             "height":16,
-            "yaw":-30,
-            "speed": 1800,
-            "points": 20
-          },
-          {
-            "command_id": 5,
-            "command_name": "Shoot Ball",
-            "time_start": 42,
-            "location_x": 0,
-            "location_y": -10,
-            "height":12,
-            "yaw":0,
-            "speed": 1800,
-            "points": 20
-          },
-          {
-            "command_id": 6,
-            "command_name": "Shoot Ball",
-            "time_start": 52,
-            "location_x": 0,
-            "location_y": 0,
-            "height":4,
-            "yaw":20,
-            "speed": 1800,
-            "points": 20
-          },
-          {
-            "command_id": 7,
-            "command_name": "Shoot Ball",
-            "time_start": 62,
-            "location_x": 0,
-            "location_y": 0,
-            "height":2,
-            "yaw":20,
-            "speed": 1700,
-            "points": 20
-          },
-          {
-            "command_id": 8,
-            "command_name": "Shoot Ball",
-            "time_start": 72,
-            "location_x": 0,
-            "location_y": 0,
-            "height":8,
-            "yaw":15,
-            "speed": 1800,
-            "points": 20
-          },
-          {
-            "command_id": 9,
-            "command_name": "Shoot Ball",
-            "time_start": 82,
-            "location_x": 0,
-            "location_y": 0,
-            "height":0,
-            "yaw":0,
-            "speed": 1600,
-            "points": 20
+            "yaw":-20,
+            "speed": 1800
           }
-          
         ]
       },
       {
@@ -114,37 +46,124 @@
             "command_id": 1,
             "command_name": "Shoot Ball",
             "time_start": 2,
-            "location_x": 0,
-            "location_y": 0,
             "height":0,
             "yaw":0,
-            "speed": 20,
-            "points": 20
+            "speed": 1800
           },
           {
             "command_id": 2,
             "command_name": "Shoot Ball",
-            "time_start": 4,
-            "location_x": 0,
-            "location_y": 0,
-            "height":0,
-            "yaw":0,
-            "speed": 20,
-            "points": 20
+            "time_start": 12,
+            "height":10,
+            "yaw":20,
+            "speed": 1800
           },
           {
             "command_id": 3,
             "command_name": "Shoot Ball",
-            "time_start": 6,
-            "location_x": 0,
-            "location_y": 0,
+            "time_start": 22,
             "height":0,
             "yaw":0,
-            "speed": 20,
-            "points": 20
+            "speed": 1800
+          },
+          {
+            "command_id": 4,
+            "command_name": "Shoot Ball",
+            "time_start": 32,
+            "height":0,
+            "yaw":0,
+            "speed": 1800
+          },
+          {
+            "command_id": 5,
+            "command_name": "Shoot Ball",
+            "time_start": 42,
+            "height":0,
+            "yaw":0,
+            "speed": 1800
+          },
+          {
+            "command_id": 6,
+            "command_name": "Shoot Ball",
+            "time_start": 52,
+            "height":0,
+            "yaw":0,
+            "speed": 1800
+          },
+          {
+            "command_id": 7,
+            "command_name": "Shoot Ball",
+            "time_start": 62,
+            "height":0,
+            "yaw":0,
+            "speed": 1700
+          },
+          {
+            "command_id": 8,
+            "command_name": "Shoot Ball",
+            "time_start": 72,
+            "height":0,
+            "yaw":0,
+            "speed": 1800
+          },
+          {
+            "command_id": 9,
+            "command_name": "Shoot Ball",
+            "time_start": 82,
+            "height":0,
+            "yaw":0,
+            "speed": 1600
+          }
+          
+        ]
+      },
+      {
+        "level_id": 3,
+        "level_name": "Level 3",
+        "commands": [
+          {
+            "command_id": 1,
+            "command_name": "Shoot Ball",
+            "time_start": 26,
+            "height":10,
+            "yaw":30,
+            "speed": 1800
+          },
+          {
+            "command_id": 2,
+            "command_name": "Shoot Ball",
+            "time_start": 30,
+            "height":0,
+            "yaw":30,
+            "speed": 1800
+          },
+          {
+            "command_id": 3,
+            "command_name": "Shoot Ball",
+            "time_start": 35,
+            "height":0,
+            "yaw":-20,
+            "speed": 1800
+          },
+          {
+            "command_id": 4,
+            "command_name": "Shoot Ball",
+            "time_start": 40,
+            "height":16,
+            "yaw":-20,
+            "speed": 1800
+          },
+          {
+            "command_id": 5,
+            "command_name": "Shoot Ball",
+            "time_start": 45,
+            "height":0,
+            "yaw":0,
+            "speed": 1800
           }
         ]
       }
+      
     ]
   }
   

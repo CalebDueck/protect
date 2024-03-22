@@ -1,6 +1,7 @@
 from client import *
 from include.utilities import *
 import pygame
+
 import sys
 import enum
 from sshclient import run_powershell_script
@@ -325,9 +326,9 @@ class MainGame:
 
 if __name__ == "__main__":
 
-    servers = [('activateMotor.local',12345)]
-    for ipAddress, port in servers:
-        run_powershell_script('activateMotor')
-    start_screen = MainGame(800, 800, servers)
+    servers = [('127.0.0.1',12345)]
+    # for ipAddress, port in servers:
+    #     run_powershell_script('activateMotor')
+    start_screen = MainGame(1920, 1080, servers)
     start_screen.run()
 
