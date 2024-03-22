@@ -32,7 +32,7 @@ class LEDSegment:
 # if isbutton==True then num_leds and segment_border_num_array doesn't matter and will be set to button presets
 
 class LEDStripController:
-    def __init__(self, pin, isbutton=False, segment_border_num_array=None, num_leds=None):
+    def __init__(self, pin, brightness, isbutton=False, segment_border_num_array=None, num_leds=None):
         # Initialize WS281x LED strip settings
         if isbutton:
             self.LED_COUNT = 25
@@ -41,7 +41,7 @@ class LEDStripController:
         self.LED_PIN = pin
         self.LED_FREQ_HZ = 800000 #maybe change
         self.LED_DMA = 10
-        self.LED_BRIGHTNESS = 255 #max is 255 works pretty good at 30
+        self.LED_BRIGHTNESS = brightness #max is 255 works pretty good at 30
         self.LED_INVERT = False
 
         #fix sync issues

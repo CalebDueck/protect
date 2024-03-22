@@ -75,7 +75,7 @@ class BackWallMainApp(BaseServerGame):
                 
                 if self.commonEvents(event):
                     continue
-                elif event.type == pygame.FINGERDOWN:
+                elif event.type == pygame.FINGERDOWN or event.type == pygame.FINGERMOTION:
                     if self.start_game != True:
                         continue
                     # Check if the mouse click is inside any rectangle
@@ -113,6 +113,8 @@ class BackWallMainApp(BaseServerGame):
                             self.lives = 0
                             print("Sending Client Update")
                             break
+
+
                 
 
             self.extractCustomEvents()

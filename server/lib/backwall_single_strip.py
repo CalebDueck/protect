@@ -4,7 +4,7 @@ import board
 
 
 class LEDBackwall_single:
-    def __init__(self, pin):
+    def __init__(self, pin, brightness=255):
         num_segments_per_row = 10
         num_leds_per_row = 180
         num_rows_per_pin = 6
@@ -13,7 +13,7 @@ class LEDBackwall_single:
         for i in range(num_segments_per_row*num_rows_per_pin+1):
             segment_def_arr.append(int(i*num_leds_per_row/num_segments_per_row))
 
-        self.strip = LEDStripController(num_leds=num_leds_per_row*num_rows_per_pin, pin=pin, isbutton=False, segment_border_num_array=segment_def_arr)
+        self.strip = LEDStripController(num_leds=num_leds_per_row*num_rows_per_pin, pin=pin, brightness=brightness, isbutton=False, segment_border_num_array=segment_def_arr)
 
     def square_index_to_strip_index(self, square_index):
         top_strip = False
