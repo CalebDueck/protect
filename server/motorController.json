@@ -12,7 +12,7 @@
             "location_y": 0,
             "height":0,
             "yaw":0,
-            "speed": 2000,
+            "speed": 1800,
             "points": 20
           },
           {
@@ -21,8 +21,8 @@
             "time_start": 12,
             "location_x": 0,
             "location_y": 0,
-            "height":0,
-            "yaw":0,
+            "height":10,
+            "yaw":20,
             "speed": 1800,
             "points": 20
           },
@@ -32,9 +32,9 @@
             "time_start": 22,
             "location_x": 0,
             "location_y": 0,
-            "height":0,
-            "yaw":0,
-            "speed": 2500,
+            "height":16,
+            "yaw":5,
+            "speed": 1800,
             "points": 20
           },
           {
@@ -43,9 +43,9 @@
             "time_start": 32,
             "location_x": 0,
             "location_y": 0,
-            "height":0,
-            "yaw":0,
-            "speed": 2400,
+            "height":16,
+            "yaw":-30,
+            "speed": 1800,
             "points": 20
           },
           {
@@ -53,10 +53,10 @@
             "command_name": "Shoot Ball",
             "time_start": 42,
             "location_x": 0,
-            "location_y": 0,
-            "height":0,
+            "location_y": -10,
+            "height":12,
             "yaw":0,
-            "speed": 2100,
+            "speed": 1800,
             "points": 20
           },
           {
@@ -65,8 +65,8 @@
             "time_start": 52,
             "location_x": 0,
             "location_y": 0,
-            "height":0,
-            "yaw":0,
+            "height":4,
+            "yaw":20,
             "speed": 1800,
             "points": 20
           },
@@ -76,8 +76,8 @@
             "time_start": 62,
             "location_x": 0,
             "location_y": 0,
-            "height":0,
-            "yaw":0,
+            "height":2,
+            "yaw":20,
             "speed": 1700,
             "points": 20
           },
@@ -87,9 +87,9 @@
             "time_start": 72,
             "location_x": 0,
             "location_y": 0,
-            "height":0,
-            "yaw":0,
-            "speed": 1900,
+            "height":8,
+            "yaw":15,
+            "speed": 1800,
             "points": 20
           },
           {
