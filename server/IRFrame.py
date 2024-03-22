@@ -24,7 +24,7 @@ class BackWallMainApp(BaseServerGame):
         for y in range(0, self.HEIGHT, self.RECT_HEIGHT):
             for x in range(0, self.WIDTH, self.RECT_WIDTH):            
                 rect = pygame.Rect(x, y, self.RECT_WIDTH, self.RECT_HEIGHT)
-                self.rectangles.append([rect, False, self.WHITE, 0, False, True, 0]) # rectangle, clicked, colour, points when clicked, successfully completed, update colour, prev update color
+                self.rectangles.append([rect, False, self.WHITE, 0, False, True, 0, 0, 0]) # rectangle, clicked, colour, points when clicked, successfully completed, update colour, prev update color, start_time, end_time
 
         self.impreciseHitBoxes = []
 
@@ -39,6 +39,9 @@ class BackWallMainApp(BaseServerGame):
             rect[3] = 0
             rect[4] = False
             rect[5] = True
+            rect[6] = 0
+            rect[7] = 0
+            rect[8] = 0
         self.start_game = False
 
     def is_inside_rect(self, pos, rect):
@@ -81,7 +84,7 @@ class BackWallMainApp(BaseServerGame):
 
                             if (rect[3] > 0 and rect[4] == False):
                                 rect[4] = True
-                                self.points = rect[3]
+                                self.points = int(round(rect[3] * ( 1 + abs(( rect[8] - (time.time()-self.start_time) )/ (rect[8] - rect[7])))))
                                 rect[3] = 0
                                 rect[2] = self.GREEN
                                 rect[5] = True
@@ -223,7 +226,9 @@ class BackWallMainApp(BaseServerGame):
                             matching_entry[5] = matching_entry[2] != self.BLUE
                             matching_entry[2] = self.BLUE
 
-                        matching_entry[3] = points 
+                        matching_entry[3] = points
+                        matching_entry[7] = time_start
+                        matching_entry[8] = time_end
             # Last Command       
             if command == commands[-1]:
                 if time_since_start > time_end + 5:
