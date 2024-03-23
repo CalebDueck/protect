@@ -103,7 +103,7 @@ class BackWallMainApp(BaseServerGame):
                             elif (rect[3] < 0 and rect[4] == False):
                                 rect[4] = True
                                 self.lives = -1
-                                rect[3] = 0
+                                # rect[3] = 0
                                 rect[2] = self.RED
                                 rect[5] = True
                                 rect[6] = time.time()
