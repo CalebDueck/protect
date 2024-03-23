@@ -194,6 +194,11 @@ class BackWallMainApp(BaseServerGame):
                         quadrant = command.get('quadrant')
                         self.impreciseHitBoxes.append([command_id,0, None, quadrant])
                         print("Command ID: " + str(command_id) + " ball has been shot")
+                    else:
+                        # flashing red
+                        if matching_entry[2] is not None:
+                            matching_entry[2][2] = self.WHITE if matching_entry[2][2] == self.RED else self.RED
+                            matching_entry[2][5] = True
                     
             else:
                 # Use list comprehension to find the entry that matches the specified location_x and location_y
