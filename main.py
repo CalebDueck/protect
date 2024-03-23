@@ -107,7 +107,7 @@ class MainGame:
                     if event.key == pygame.K_RETURN:
                         try:
                             level_chosen = int(self.level)
-                            if level_chosen > 0 and level_chosen <= 10:
+                            if level_chosen > 0 and level_chosen <= 50:
                                 self.state = MainGameStates.LEVEL_SELECTED
                                 self.level_input_active = False
                                 message = "Client,INITIALIZE_GAME," + str(level_chosen) + "\n"
