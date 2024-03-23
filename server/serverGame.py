@@ -23,6 +23,7 @@ class BaseServerGame(ABC):
         self.GREEN = (0, 255, 0)
         self.BLUE = (0, 0, 255)
         self.ORANGE = (255, 165, 0)
+        self.YELLOW = (255, 255, 0)
 
         # Create the screen
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
@@ -50,7 +51,7 @@ class BaseServerGame(ABC):
 
         self.server.start()
         if self.dummy_server:
-            self.event_queue.put({"type": NetworkEvents.EVENT_INITIALIZE_GAME, "message": {"address": '', "message": 'Client,INITIALIZE_GAME,5\n'}})
+            self.event_queue.put({"type": NetworkEvents.EVENT_INITIALIZE_GAME, "message": {"address": '', "message": 'Client,INITIALIZE_GAME,19'}})
             self.event_queue.put({"type": NetworkEvents.EVENT_START, "message": {"address":'', "message": 'Client,START_GAME\n'}})
 
     def commonEvents(self, event):

@@ -49,7 +49,49 @@
       ]
     },
     {
-      "level_id": 5,
+      "level_id": 11,
+      "level_name": "Level 11",
+      "commands": [        
+        {"command_id": 1, "command_name": "Click Box", "time_start": 5, "location_x": 5, "location_y": 3, "time_end": 12, "points": 20},
+        {"command_id": 1, "command_name": "Dont Click", "time_start": 5, "location_x": 7, "location_y": 3, "time_end": 12, "points": -20},
+        {"command_id": 2, "command_name": "Click Box", "time_start": 13, "location_x": 7, "location_y": 2, "time_end": 20, "points": 20},
+        {"command_id": 3, "command_name": "Click Box", "time_start": 21, "location_x": 3, "location_y": 2, "time_end": 28, "points": 20},
+        {"command_id": 4, "command_name": "Click Box", "time_start": 29, "location_x": 3, "location_y": 5, "time_end": 36, "points": 20},
+        {"command_id": 5, "command_name": "Click Box", "time_start": 37, "location_x": 7, "location_y": 5, "time_end": 44, "points": 20},
+        {"command_id": 6, "command_name": "Click Box", "time_start": 45, "location_x": 5, "location_y": 0, "time_end": 52, "points": 20},
+        {"command_id": 1, "command_name": "Dont Click", "time_start": 45, "location_x": 5, "location_y": 3, "time_end": 52, "points": -20},
+        {"command_id": 1, "command_name": "Dont Click", "time_start": 45, "location_x": 0, "location_y": 2, "time_end": 52, "points": -20},
+        {"command_id": 7, "command_name": "Click Box", "time_start": 53, "location_x": 3, "location_y": 3, "time_end": 60, "points": 20},
+        {"command_id": 8, "command_name": "Click Box", "time_start": 53, "location_x": 6, "location_y": 3, "time_end": 60, "points": 20}
+      ]
+    },
+    {
+      "level_id": 13,
+      "level_name": "Level 3",
+      "commands": [        
+        {"command_id": 1, "command_name": "Click Box", "time_start": 2, "location_x": 3, "location_y": 3, "time_end": 7, "points": 20},
+        {"command_id": 2, "command_name": "Click Box", "time_start": 2, "location_x": 6, "location_y": 3, "time_end": 7, "points": 20},
+        {"command_id": 3, "command_name": "Click Box", "time_start": 8, "location_x": 2, "location_y": 1, "time_end": 15, "points": 20},
+        {"command_id": 4, "command_name": "Click Box", "time_start": 8, "location_x": 2, "location_y": 5, "time_end": 15, "points": 20},
+        {"command_id": 5, "command_name": "Click Box", "time_start": 14, "location_x": 2, "location_y": 4, "time_end": 19, "points": 20},
+        {"command_id": 6, "command_name": "Click Box", "time_start": 14, "location_x": 6, "location_y": 3, "time_end": 19, "points": 20},
+        {"command_id": 7, "command_name": "Click Box", "time_start": 20, "location_x": 4, "location_y": 4, "time_end": 25, "points": 20},
+        {"command_id": 8, "command_name": "Click Box", "time_start": 20, "location_x": 7, "location_y": 0, "time_end": 25, "points": 20},
+        {"command_id": 9, "command_name": "Click Box", "time_start": 20, "location_x": 7, "location_y": 4, "time_end": 25, "points": 20},
+        {"command_id": 15, "command_name": "Click Box", "time_start": 26, "location_x": 0, "location_y": 0, "time_end": 31, "points": 20},
+        {"command_id": 16, "command_name": "Click Box", "time_start": 29, "location_x": 9, "location_y": 0, "time_end": 34, "points": 20},
+        {"command_id": 17, "command_name": "Click Box", "time_start": 31, "location_x": 0, "location_y": 5, "time_end": 36, "points": 20},
+        {"command_id": 18, "command_name": "Click Box", "time_start": 34, "location_x": 9, "location_y": 5, "time_end": 39, "points": 20},
+        {"command_id": 19, "command_name": "Click Box", "time_start": 40, "location_x": 3, "location_y": 0, "time_end": 45, "points": 20},
+        {"command_id": 20, "command_name": "Click Box", "time_start": 41, "location_x": 6, "location_y": 1, "time_end": 46, "points": 20},
+        {"command_id": 21, "command_name": "Click Box", "time_start": 42, "location_x": 3, "location_y": 2, "time_end": 47, "points": 20},
+        {"command_id": 22, "command_name": "Click Box", "time_start": 43, "location_x": 6, "location_y": 3, "time_end": 48, "points": 20},
+        {"command_id": 23, "command_name": "Click Box", "time_start": 44, "location_x": 3, "location_y": 4, "time_end": 49, "points": 20},
+        {"command_id": 24, "command_name": "Click Box", "time_start": 45, "location_x": 6, "location_y": 5, "time_end": 50, "points": 20}
+      ]
+    },
+    {
+      "level_id": 15,
       "level_name": "Level 5",
       "commands": [        
         {"command_id": 1, "command_name": "Click Box", "time_start": 2, "location_x": 3, "location_y": 2, "time_end": 5, "points": 20},
@@ -82,7 +124,7 @@
       ]
     },    
     {
-        "level_id": 9,
+        "level_id": 19,
         "level_name": "Level 5 but with double the stuff",
         "commands": [        
             {"command_id": 1, "command_name": "Click Box", "time_start": 2, "location_x": 3, "location_y": 2, "time_end": 5, "points": 20},
@@ -136,11 +178,28 @@
             {"command_id": 31, "command_name": "Click Box", "time_start": 42, "location_x": 9, "location_y": 5, "time_end": 45, "points": 20},
             {"command_id": 31, "command_name": "Click Box", "time_start": 42, "location_x": 5, "location_y": 5, "time_end": 45, "points": 20}
         ]
-      }, 
+      },
+      {
+        "level_id": 11,
+        "level_name": "Level 11",
+        "commands": [        
+          {"command_id": 1, "command_name": "Click Box", "time_start": 5, "location_x": 5, "location_y": 3, "time_end": 12, "points": 20},
+          {"command_id": 1, "command_name": "Dont Click", "time_start": 5, "location_x": 7, "location_y": 3, "time_end": 12, "points": -20},
+          {"command_id": 2, "command_name": "Click Box", "time_start": 13, "location_x": 7, "location_y": 2, "time_end": 20, "points": 20},
+          {"command_id": 3, "command_name": "Click Box", "time_start": 21, "location_x": 3, "location_y": 2, "time_end": 28, "points": 20},
+          {"command_id": 4, "command_name": "Click Box", "time_start": 29, "location_x": 3, "location_y": 5, "time_end": 36, "points": 20},
+          {"command_id": 5, "command_name": "Click Box", "time_start": 37, "location_x": 7, "location_y": 5, "time_end": 44, "points": 20},
+          {"command_id": 6, "command_name": "Click Box", "time_start": 45, "location_x": 5, "location_y": 0, "time_end": 52, "points": 20},
+          {"command_id": 1, "command_name": "Dont Click", "time_start": 45, "location_x": 5, "location_y": 3, "time_end": 52, "points": -20},
+          {"command_id": 1, "command_name": "Dont Click", "time_start": 45, "location_x": 0, "location_y": 2, "time_end": 52, "points": -20},
+          {"command_id": 7, "command_name": "Click Box", "time_start": 53, "location_x": 3, "location_y": 3, "time_end": 60, "points": 20},
+          {"command_id": 8, "command_name": "Click Box", "time_start": 53, "location_x": 6, "location_y": 3, "time_end": 60, "points": 20}
+        ]
+      },
 
 
     {
-        "level_id": 11,
+        "level_id": 31,
         "level_name": "Clear All Quick",
         "commands": [        
             {"command_id": 1, "command_name": "Click Box", "time_start": 5, "location_x": 0, "location_y": 0, "time_end": 60, "points": 20},

@@ -93,7 +93,7 @@ class BackWallMainApp(BaseServerGame):
                                 rect[4] = True
                                 self.lives = -1
                                 rect[3] = 0
-                                rect[2] = self.ORANGE
+                                rect[2] = self.RED
                                 rect[5] = True
                                 rect[6] = time.time()
                             else:
@@ -225,8 +225,8 @@ class BackWallMainApp(BaseServerGame):
                             matching_entry[5] = matching_entry[2] != self.BLUE
                             matching_entry[2] = self.BLUE
                         elif matching_entry[3] < 0:
-                            matching_entry[5] = matching_entry[2] != self.BLUE
-                            matching_entry[2] = self.BLUE
+                            matching_entry[5] = matching_entry[2] != self.ORANGE
+                            matching_entry[2] = self.ORANGE
 
                         matching_entry[3] = points
                         matching_entry[7] = time_start
@@ -250,6 +250,8 @@ class BackWallMainApp(BaseServerGame):
             led_color = c.orange
         elif color == self.GREEN:
             led_color = c.green
+        elif color == self.YELLOW:
+            led_color = c.yellow
         return led_color
 
 
