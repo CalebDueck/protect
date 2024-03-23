@@ -44,6 +44,17 @@ class BackWallMainApp(BaseServerGame):
             rect[8] = 0
         self.start_game = False
 
+    def in_quadrant(self, index):
+        if  index >= 0 and index <= 4 or index >= 10 and index <= 14 or index >= 20 and index <= 24:
+            return 1
+        elif index >= 5 and index <= 9 or index >= 15 and index <= 29 or index >= 25 and index <= 30:
+            return 2
+        elif index >= 30 and index <= 34 or index >= 40 and index <= 34 or index >= 50 and index <= 54:
+            return 3
+        else:
+            return 4
+
+
     def is_inside_rect(self, pos, rect):
         return rect.collidepoint(pos)
 
@@ -79,7 +90,7 @@ class BackWallMainApp(BaseServerGame):
                     if self.start_game != True:
                         continue
                     # Check if the mouse click is inside any rectangle
-                    for rect in self.rectangles:
+                    for index, rect in enumerate(self.rectangles):
                         if self.is_inside_rect((event.x * self.WIDTH,event.y * self.HEIGHT), rect[0]) and time.time() - rect[6] > self.debouncing:                           
 
                             if (rect[3] > 0 and rect[4] == False):
@@ -97,15 +108,16 @@ class BackWallMainApp(BaseServerGame):
                                 rect[5] = True
                                 rect[6] = time.time()
                             else:
-                                if rect[2] != self.GREEN:
+                                if rect[2] != self.GREEN:                                    
                                     matching_entry = next((entry for entry in self.impreciseHitBoxes if entry[1] == 0), None)
                                     if matching_entry is not None:
-                                        self.lives = -1
-                                        matching_entry[1] = 1
-                                        rect[2] = self.RED
-                                        rect[5] = True
-                                        rect[6] = time.time()
-                                        matching_entry[2] = rect
+                                        if matching_entry[3] is None or self.in_quadrant(index) == matching_entry[3]:
+                                            self.lives = -1
+                                            matching_entry[1] = 1
+                                            rect[2] = self.RED
+                                            rect[5] = True
+                                            rect[6] = time.time()
+                                            matching_entry[2] = rect
 
                             
                             self.server.point_update(points=self.points,lives=self.lives)
@@ -179,7 +191,8 @@ class BackWallMainApp(BaseServerGame):
 
                 elif not 'completed' in command:
                     if matching_entry is None:
-                        self.impreciseHitBoxes.append([command_id,0, None])
+                        quadrant = command.get('quadrant')
+                        self.impreciseHitBoxes.append([command_id,0, None, quadrant])
                         print("Command ID: " + str(command_id) + " ball has been shot")
                     
             else:
