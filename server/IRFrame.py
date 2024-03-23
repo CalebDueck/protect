@@ -238,12 +238,16 @@ class BackWallMainApp(BaseServerGame):
                             matching_entry[5] = matching_entry[2] != self.BLUE
                             matching_entry[2] = self.BLUE
                         elif matching_entry[3] < 0:
-                            matching_entry[5] = matching_entry[2] != self.ORANGE
-                            matching_entry[2] = self.ORANGE
+                            matching_entry[5] = matching_entry[2] != self.RED
+                            matching_entry[2] = self.RED
 
                         matching_entry[3] = points
                         matching_entry[7] = time_start
                         matching_entry[8] = time_end
+                    # make flashing red 
+                    if matching_entry[4] == True and matching_entry[3] < 0:
+                        matching_entry[2] = self.WHITE if matching_entry[2] == self.RED else self.RED
+                        matching_entry[5] = True
             # Last Command       
             if command == commands[-1]:
                 if time_since_start > time_end + 5:
