@@ -12,7 +12,7 @@ from lib.color_helpers import c
 
 class BackWallMainApp(BaseServerGame):
     def __init__(self, width, height, host, port, dummy_server=False):
-        super().__init__(width, height, host, port, dummy_server=dummy_server)
+        super().__init__(width, height, host, port, dummy_server=dummy_server, flags=pygame.FULLSCREEN)
 
         # set up rectangles for back wall
         self.rectangles = []

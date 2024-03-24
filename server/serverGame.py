@@ -7,7 +7,7 @@ import time
 import os
 
 class BaseServerGame(ABC):
-    def __init__(self, width, height, host, port, dummy_server=False):
+    def __init__(self, width, height, host, port, dummy_server=False, flags=None):
         os.putenv('SDL_FBDEV','/dev/fb0')
         pygame.init()
         self.host = host
@@ -26,7 +26,10 @@ class BaseServerGame(ABC):
         self.YELLOW = (255, 255, 0)
 
         # Create the screen
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        if flags is not None:
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), flags)
+        else:
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
        
         # event queue for custom events
         self.event_queue = queue.Queue()
@@ -51,7 +54,7 @@ class BaseServerGame(ABC):
 
         self.server.start()
         if self.dummy_server:
-            self.event_queue.put({"type": NetworkEvents.EVENT_INITIALIZE_GAME, "message": {"address": '', "message": 'Client,INITIALIZE_GAME,19'}})
+            self.event_queue.put({"type": NetworkEvents.EVENT_INITIALIZE_GAME, "message": {"address": '', "message": 'Client,INITIALIZE_GAME,20'}})
             self.event_queue.put({"type": NetworkEvents.EVENT_START, "message": {"address":'', "message": 'Client,START_GAME\n'}})
 
     def commonEvents(self, event):
