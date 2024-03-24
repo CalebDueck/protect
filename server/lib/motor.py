@@ -83,7 +83,11 @@ class launcher_motors:
         Rerror_buf = [0] * self.error_buf_len
         Lspeed_buf = [0] * self.speed_buf_len
         Rspeed_buf = [0] * self.speed_buf_len
+        time_buf = [0] * self.error_buf_len
+        time_buf[self.error_buf_len - 1] = time.perf_counter()
+        time_buf[0] = time.perf_counter()
         err_buf_index = 0
+        prev_err_index = self.error_buf_len - 1
         speed_buf_index = 0
         last_updated_l = time.perf_counter()
         last_updated_r = time.perf_counter()
@@ -102,17 +106,22 @@ class launcher_motors:
                     count_R+=1
                 old_value_R = not old_value_R
             # every 100ms, record the time and # of counts
-            if count_L > 5 and count_R > 5 or time.perf_counter()-self.timestamps[i-1] > 0.1:
-                self.timestamps[i] = time.perf_counter()
-                Lspeed_buf[speed_buf_index] = count_L/(12*(self.timestamps[i]-self.timestamps[i-1]))*60;
-                Rspeed_buf[speed_buf_index] = count_R/(12*(self.timestamps[i]-self.timestamps[i-1]))*60;
+            if count_L > 5 and count_R > 5 or time.perf_counter()-time_buf[prev_err_index] > 0.1:
+                if i < 10_000:
+                    self.timestamps[i] = time.perf_counter()
+                time_buf[err_buf_index] = time.perf_counter()
+                Lspeed_buf[speed_buf_index] = count_L/(12*(time_buf[err_buf_index]-time_buf[prev_err_index]))*60;
+                Rspeed_buf[speed_buf_index] = count_R/(12*(time_buf[err_buf_index]-time_buf[prev_err_index]))*60;
                 avg_L_speed = 0
                 avg_R_speed = 0
                 for ind in range(self.speed_buf_len):
                     avg_L_speed += Lspeed_buf[ind]
                     avg_R_speed += Rspeed_buf[ind]
-                self.L_speed[i] = avg_L_speed / self.speed_buf_len
-                self.R_speed[i] = avg_R_speed / self.speed_buf_len
+                if i < 10_000:
+                    self.L_speed[i] = avg_L_speed / self.speed_buf_len
+                    self.R_speed[i] = avg_R_speed / self.speed_buf_len
+                L_speed = avg_L_speed / self.speed_buf_len
+                R_speed = avg_R_speed / self.speed_buf_len 
                 count_L = 0
                 count_R = 0
                 i += 1
@@ -121,8 +130,8 @@ class launcher_motors:
                     speed_buf_index = 0
 #             if time.perf_counter() - old_time > 0.05:
                 old_time = time.perf_counter();
-                Lerror = self.desired_speed - self.L_speed[i-1]
-                Rerror = self.desired_speed - self.R_speed[i-1]
+                Lerror = self.desired_speed - L_speed
+                Rerror = self.desired_speed - R_speed
 #                 print(Lerror)
                 Lerror_buf[err_buf_index] = Lerror
                 Rerror_buf[err_buf_index] = Rerror
@@ -135,10 +144,10 @@ class launcher_motors:
                         temp_i = err_buf_index - ind
                         prev_i = err_buf_index - ind - 1
                         if temp_i < 0:
-                            temp_i = self.error_buf_len - ind
+                            temp_i = self.error_buf_len + temp_i
                         if prev_i < 0 :
-                            prev_i = self.error_buf_len - ind -1
-                        dt = self.timestamps[i-ind]-self.timestamps[i-ind-1]
+                            prev_i = self.error_buf_len + prev_i
+                        dt = time_buf[temp_i]-time_buf[prev_i]
                         Ledot += (Lerror_buf[temp_i] - Lerror_buf[prev_i])/dt
                         Leint += (Lerror_buf[temp_i] - Lerror_buf[prev_i])*dt
                         Redot += (Rerror_buf[temp_i] - Rerror_buf[prev_i])/dt
@@ -158,11 +167,15 @@ class launcher_motors:
                     self.pwm1.change_duty_cycle(new_pwm_r)
                     self.pwm_r = new_pwm_r
                     last_updated_r = time.perf_counter()
-                self.L_pwm[i] = self.pwm_l
-                self.R_pwm[i] = self.pwm_r
+                if i < 10_000:
+                    self.L_pwm[i] = self.pwm_l
+                    self.R_pwm[i] = self.pwm_r
                 err_buf_index += 1
+                prev_err_index +=1
                 if err_buf_index >= (self.error_buf_len):
                     err_buf_index = 0
+                if prev_err_index >= (self.error_buf_len):
+                    prev_err_index = 0
             if self.running == 0:
                 break
         
