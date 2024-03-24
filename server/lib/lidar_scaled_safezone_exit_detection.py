@@ -27,10 +27,10 @@ MAX_ANGLE = 180
 DISTANCE_THRESHOLD = 1000  # Adjust this based on your specific use case
 
 SAFEZONE_WIDTH = 3000
-SAFEZONE_HEIGHT = 1000
+SAFEZONE_HEIGHT = 1500
 SAFEZONE_TL = [-1500,2500] #top left of safe zone
 PLAY_AREA_WIDTH =3000
-PLAY_AREA_HEIGHT = 3000
+PLAY_AREA_HEIGHT = 3500
 PLAY_AREA_TL = [-1500,800]
 
 
@@ -86,9 +86,9 @@ def plot_points_xy(data, color=(255,0,0)):
 
             
 def scale_x(x):
-    return x / max_distance * (window_size[0] / 2 - 1)
+    return x / 2000 * (window_size[0] / 2 - 1)
 def scale_y(y):
-    return y / max_distance * (window_size[1])
+    return y / 6000 * (window_size[1])
 
 def transform_x(x):
     return window_size[0] / 2 + scale_x(x)
