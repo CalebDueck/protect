@@ -8,7 +8,7 @@ from adafruit_rplidar import RPLidar
 # Set up pygame and the display
 pygame.init()
 pygame.display.set_caption('LIDAR Data')
-window_size = (640, 480)
+window_size = (1920, 1080)
 lcd = pygame.display.set_mode(window_size)
 pygame.mouse.set_visible(False)
 lcd.fill((0, 0, 0))
@@ -27,16 +27,17 @@ MIN_ANGLE = 0
 MAX_ANGLE = 180
 DISTANCE_THRESHOLD = 1000  # Adjust this based on your specific use case
 
-SAFEZONE_WIDTH = 2000
-SAFEZONE_HEIGHT = 500
-SAFEZONE_TL = [-1000,1000] #top left of safe zone
-PLAY_AREA_WIDTH =4000
-PLAY_AREA_HEIGHT = 2000
-PLAY_AREA_TL = [-2000,0]
+SAFEZONE_WIDTH = 3000
+SAFEZONE_HEIGHT = 1000
+SAFEZONE_TL = [-1500,2500] #top left of safe zone
+PLAY_AREA_WIDTH =3000
+PLAY_AREA_HEIGHT = 3000
+PLAY_AREA_TL = [-1500,800]
 
 
 
-def safe_zone_occupied(xy_data, min_points = 5):
+
+def safe_zone_occupied(xy_data, min_points = 3):
     points_detected = 0
     for point in xy_data:
         if is_point_in_safezone(point):
@@ -59,7 +60,7 @@ def is_point_in_playarea(point):
 
 def lidar_to_xy(data):
     point_cloud = list()
-    for angle in range(360):
+    for angle in range(1080):
         distance = data[angle]
         if distance > 0:  # ignore initially ungathered data points
             radians = angle * pi / 180.0
@@ -128,7 +129,7 @@ def plot_point(point, color=(255,0,0)):
         int(transform_x(x)),
         int(transform_y(y)),
     )
-    pygame.draw.circle(lcd, color, scaledpoint, 1)
+    pygame.draw.circle(lcd, color, scaledpoint, 3)
 
 def plot_points_xy(data, color=(255,0,0)):
     global max_distance
@@ -203,13 +204,14 @@ def process_data(data):
     plot_points_xy(xy_pointcloud)
     plot_points_xy(xy_in_frame, (0,255,0))
 
-    centrepoint, linexy = find_average_line_of_best_fit(xy_in_frame)
-    # Draw the average point
-    pygame.draw.circle(lcd, (255, 255, 255), (transform_x(int(centrepoint[0])), transform_y(int(centrepoint[1]))), 3)
-    # Draw the line of best fit
-    pygame.draw.line(lcd, (0, 255, 255), 
-                     (transform_x(linexy[0][0]), transform_y(linexy[1][0])), 
-                     (transform_x(linexy[0][1]), transform_y(linexy[1][1])), 4)
+    if len(xy_in_frame)>3:
+        centrepoint, linexy = find_average_line_of_best_fit(xy_in_frame)
+        # Draw the average point
+        pygame.draw.circle(lcd, (255, 255, 255), (transform_x(int(centrepoint[0])), transform_y(int(centrepoint[1]))), 10)
+        # Draw the line of best fit
+        pygame.draw.line(lcd, (0, 255, 255), 
+                        (transform_x(linexy[0][0]), transform_y(linexy[1][0])), 
+                        (transform_x(linexy[0][1]), transform_y(linexy[1][1])), 4)
 
 
 
@@ -255,10 +257,17 @@ def main():
 
     try:
         print(lidar.info)
+        scan_data = [0] * 1080 #zero out scan data each time
+        
         for scan in lidar.iter_scans():
-            scan_data = [0] * 360 #zero out scan data each time
+            
+            for i in range(360):
+                scan_data[720+i] = scan_data[360+i]
+                scan_data[360+i] = scan_data[i] 
+                scan_data[i] = 0 #zero out first scan data each time
             for (_, angle, distance) in scan:
                 scan_data[min([359, floor(angle)])] = distance
+
 
             process_data(scan_data)
 
