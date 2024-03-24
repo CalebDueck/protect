@@ -72,7 +72,7 @@ class MotorControllerMainApp(BaseServerGame):
             yaw = command['yaw']
             speed = command['speed']
             if not 'completed' in command: 
-                self.launcher_motors.update_speed(speed)
+            self.launcher_motors.update_speed(speed)
                 print("Shot ball for command_id", command_id, "at speed", speed)
                 message = f"{height},{yaw}\n"
                 time.sleep(0.5)
@@ -84,6 +84,6 @@ class MotorControllerMainApp(BaseServerGame):
                     self.launcher_motors.update_speed(0)
 
 if __name__ == "__main__":
-    motor_controller_main_app = MotorControllerMainApp(800,600,'activateMotor.local',12345, True)
+    motor_controller_main_app = MotorControllerMainApp(800,600,'192.168.1.121',12345, True)
     motor_controller_main_app.connect_client()
     motor_controller_main_app.run()
