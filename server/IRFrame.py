@@ -280,6 +280,6 @@ class BackWallMainApp(BaseServerGame):
            
 
 if __name__ == "__main__":
-    backWallMainApp = BackWallMainApp(1920,1080,'192.168.1.141',12345, True)
+    backWallMainApp = BackWallMainApp(1920,1080,'activateLED.local',12345, False)
     backWallMainApp.connect_client()
     backWallMainApp.run()
