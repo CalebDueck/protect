@@ -16,10 +16,12 @@ class MotorControllerMainApp(BaseServerGame):
         self.launcher_motors = launcher_motors(16,26)
         self.launcher_motors.start_thread()
         self.arduino = ArduinoSerial("/dev/ttyACM0", 9600)
-        self.launcher_motors.update_speed(1800)
 
     def reset_game(self):
-        pass
+        self.launcher_motors.update_speed(0)
+        self.arduino.comm.reset_output_buffer()
+        self.arduino.write("home\n")
+        
 
     def run(self):
         self.start_game = False
@@ -45,7 +47,8 @@ class MotorControllerMainApp(BaseServerGame):
 
     def read_game_file(self):
         with open('motorController.json', 'r') as file:
-            self.game_data = json.load(file)   
+            self.game_data = json.load(file)
+        self.launcher_motors.update_speed(1500)
 
     def update_information(self):
         if self.game_data == None:
@@ -80,10 +83,10 @@ class MotorControllerMainApp(BaseServerGame):
                 command['completed'] = True
             
             if command == commands[-1]:
-                if time_since_start > time_start + 15:
+                if time_since_start > time_start + 5:
                     self.launcher_motors.update_speed(0)
 
 if __name__ == "__main__":
-    motor_controller_main_app = MotorControllerMainApp(800,600,'192.168.1.121',12345, True)
+    motor_controller_main_app = MotorControllerMainApp(800,600,'activate.local',12345, False)
     motor_controller_main_app.connect_client()
     motor_controller_main_app.run()
