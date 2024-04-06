@@ -17,6 +17,8 @@ class MainGameStates(enum.IntEnum):
     ACTIVE_GAME = 6
     END_GAME = 7
 
+game_mode = 0 ## 0 - React 1 - Protect
+
 
 class MainGame:
     def __init__(self, screen_width, screen_height, serversAddresses):
@@ -49,6 +51,9 @@ class MainGame:
         self.play_again_button = pygame.Rect(0, 0, 400, 100)
         self.play_again_button.center = (self.screen_width//2, 800)
 
+        self.end_button = pygame.Rect(0,0,400,100)
+        self.end_button.center = (self.screen_width//2, 1000)
+
         self.font_size = 80
         self.font = pygame.font.SysFont(None, self.font_size)
 
@@ -76,7 +81,7 @@ class MainGame:
         self.connectServers()
     
     def connectServers(self):
-        for address,port in self.serversAddresses:
+        for address,port, _ in self.serversAddresses:
             server = ClientThread(address, port, self)
             server.connect()
             print("Connecting to Server: " + address)
@@ -140,6 +145,10 @@ class MainGame:
                     self.lives = 5
                     self.name = ""
                     self.input_active = True
+                elif self.end_button.collidepoint(event.pos):
+                    print("Ending Game")
+                    self.state = MainGameStates.END_GAME
+                    self.sendMessageToAllServers("Client,END_GAME\n")
                 
             elif event.type == NetworkEvents.EVENT_POINT_UPDATE:
                 print("Received Point Update")
@@ -229,6 +238,12 @@ class MainGame:
                     self.transition_timer = 0
             else:
                 self.draw_hearts()
+
+            pygame.draw.rect(self.screen, self.black, self.end_button)
+            text = self.font.render("STOP", True, self.white)
+            text_rect = text.get_rect()
+            text_rect.center = self.end_button.center
+            self.screen.blit(text, text_rect)
 
         elif self.state == MainGameStates.READY_WAIT:
             pygame.draw.rect(self.screen, self.black, self.ready_button)
@@ -326,9 +341,18 @@ class MainGame:
 
 if __name__ == "__main__":
 
-    servers = [('127.0.0.1',12345)]
-    # for ipAddress, port in servers:
-    #     run_powershell_script('activateMotor')
+    ## Run React Only
+    if game_mode == 0:
+        servers = [('127.0.0.1',12345, './repos/protect/server'),]
+    else:
+        servers = [('activateLED',12345, './repos/protect/server'), ('activate', 12345, './Desktop/protect/server') ]
+    
+    if game_mode == 0:
+        run_powershell_script('activateLED', './repos/protect/server')
+    else:
+        run_powershell_script('activateLED', './repos/protect/server')
+        run_powershell_script('activate', './Desktop/protect/server')
+        
     start_screen = MainGame(1920, 1080, servers)
     start_screen.run()
 
